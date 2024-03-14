@@ -22,24 +22,24 @@ const spec = {
 	formatid: process.argv.length > 2 ? "gen7doublescustomgame" : "gen7customgame",
 };
 
-let team = Teams.generate(process.argv.length > 2 ? 'gen7randomdoublesbattle' : 'gen7randombattle');
-let ai_team = Teams.generate(process.argv.length > 2 ? 'gen7randomdoublesbattle' : 'gen7randombattle');
+let team = Teams.pack(Teams.generate(process.argv.length > 2 ? 'gen7randomdoublesbattle' : 'gen7randombattle'));
+let ai_team = Teams.pack(Teams.generate(process.argv.length > 2 ? 'gen7randomdoublesbattle' : 'gen7randombattle'));
 
 const fs = require('fs');
-fs.writeFileSync('Team_Player.txt', Teams.pack(team));
-fs.writeFileSync('Team_AI.txt', Teams.pack(ai_team));
-fs.writeFileSync('Team_Player_Export.txt', Teams.export(Teams.unpack(Teams.pack(team))).replaceAll('  \n', '\n'));
-fs.writeFileSync('Team_AI_Export.txt', Teams.export(Teams.unpack(Teams.pack(ai_team))).replaceAll('  \n', '\n'));
+fs.writeFileSync('Team_Player.txt', team);
+fs.writeFileSync('Team_AI.txt', ai_team);
+fs.writeFileSync('Team_Player_Export.txt', Teams.export(Teams.unpack(team)).replaceAll('  \n', '\n'));
+fs.writeFileSync('Team_AI_Export.txt', Teams.export(Teams.unpack(ai_team)).replaceAll('  \n', '\n'));
 
 fs.writeFileSync('Battle_Log.txt', '');
 
 const p1spec = {
 	name: "Player",
-	team: Teams.pack(team),
+	team: team,
 };
 const p2spec = {
 	name: "AI",
-	team: Teams.pack(ai_team),
+	team: ai_team,
 };
 
 const ai = new RandomPlayerAI(streams.p2);
