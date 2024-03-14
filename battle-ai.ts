@@ -25,13 +25,11 @@ const spec = {
 let team = Teams.generate(process.argv.length > 2 ? 'gen7randomdoublesbattle' : 'gen7randombattle');
 let ai_team = Teams.generate(process.argv.length > 2 ? 'gen7randomdoublesbattle' : 'gen7randombattle');
 
-console.log(Teams.export(team));
-
 const fs = require('fs');
 fs.writeFileSync('Team_Player.txt', Teams.pack(team));
 fs.writeFileSync('Team_AI.txt', Teams.pack(ai_team));
-fs.writeFileSync('Team_Player_Export.txt', Teams.export(team));
-fs.writeFileSync('Team_AI_Export.txt', Teams.export(ai_team));
+fs.writeFileSync('Team_Player_Export.txt', Teams.export(Teams.import(Teams.pack(team))));
+fs.writeFileSync('Team_AI_Export.txt', Teams.export(Teams.import(Teams.pack(ai_team))));
 
 fs.writeFileSync('Battle_Log.txt', '');
 
