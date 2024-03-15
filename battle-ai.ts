@@ -22,7 +22,7 @@ const spec = {
 	formatid: process.argv[2],
 };
 
-let team = Teams.pack(Teams.generate(process.argv[3]));
+let team = process.argv[4] ?? Teams.pack(Teams.generate(process.argv[3]));
 let ai_team = Teams.pack(Teams.generate(process.argv[3]));
 
 const fs = require('fs');
