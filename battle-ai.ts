@@ -19,11 +19,11 @@ import {RandomPlayerAI} from '../tools/random-player-ai';
 const streams = getPlayerStreams(new BattleStream());
 
 const spec = {
-	formatid: process.argv.length > 2 ? "gen7doublescustomgame" : "gen7customgame",
+	formatid: process.argv[2],
 };
 
-let team = Teams.pack(Teams.generate(process.argv.length > 2 ? 'gen7randomdoublesbattle' : 'gen7randombattle'));
-let ai_team = Teams.pack(Teams.generate(process.argv.length > 2 ? 'gen7randomdoublesbattle' : 'gen7randombattle'));
+let team = Teams.pack(Teams.generate(process.argv[3]));
+let ai_team = Teams.pack(Teams.generate(process.argv[3]));
 
 const fs = require('fs');
 fs.writeFileSync('Team_Player.txt', team);
