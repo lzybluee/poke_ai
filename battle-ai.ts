@@ -73,5 +73,8 @@ const rl = readline.createInterface({
 rl.on('line', (line) => {
 	if (line == 'q')
 		process.exit();
-	void streams.omniscient.write('>p1 ' + line);
+	else if (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch '))
+		void streams.omniscient.write('>p1 ' + line);
+	else if (line.startsWith('eval '))
+		void streams.omniscient.write('>eval JSON.stringify(pokemon("p1", "' + line.slice(5) + '").toJSON(), null, 4)');
 });
