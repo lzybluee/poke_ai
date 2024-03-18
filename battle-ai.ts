@@ -17,15 +17,32 @@ import {RandomPlayerAI} from '../tools/random-player-ai';
  *********************************************************************/
 
 const streams = getPlayerStreams(new BattleStream());
+const fs = require('fs');
 
 const spec = {
 	formatid: process.argv[2],
 };
 
-let team = process.argv[4] ?? Teams.pack(Teams.generate(process.argv[3]));
-let ai_team = Teams.pack(Teams.generate(process.argv[3]));
+let team = '';
+let ai_team = '';
 
-const fs = require('fs');
+let get_team = (input) => {
+	if (input.includes('|'))
+		return input;
+	else if (input.endsWith('.txt'))
+		return fs.readFileSync(input, {encoding: 'utf8'});
+	else
+		return Teams.pack(Teams.generate(input));
+};
+
+if (process.argv.length == 4) {
+	team = get_team(process.argv[3]);
+	ai_team = get_team(process.argv[3]);
+} else if (process.argv.length == 5) {
+	team = get_team(process.argv[3]);
+	ai_team = get_team(process.argv[4]);
+}
+
 fs.writeFileSync('Team_Player.txt', team);
 fs.writeFileSync('Team_AI.txt', ai_team);
 fs.writeFileSync('Team_Player_Export.txt', Teams.export(Teams.unpack(team)).replaceAll('  \n', '\n'));
