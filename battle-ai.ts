@@ -95,6 +95,8 @@ const rl = readline.createInterface({
 });
 
 rl.on('line', (line) => {
+	fs.appendFileSync('Battle_Log.txt', line);
+
 	if (line == 'q')
 		process.exit();
 	else if (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch ') || line == 'auto')
