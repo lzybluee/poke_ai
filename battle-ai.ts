@@ -76,6 +76,9 @@ void (async () => {
 		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
 		}
+
+		if (chunk.startsWith('|win|'))
+			process.exit();
 	}
 })();
 
