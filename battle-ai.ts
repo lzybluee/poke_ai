@@ -53,8 +53,12 @@ void (async () => {
 
 void (async () => {
 	for await (const chunk of streams.p1) {
-		if (!chunk.startsWith('|request|'))
+		if (chunk.includes('JSON.stringify')) {
+			fs.writeFileSync('Status.txt', chunk.replaceAll('||', ''));
+			console.log('>Status.txt update!');
+		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
+		}
 	}
 })();
 
@@ -75,6 +79,6 @@ rl.on('line', (line) => {
 		process.exit();
 	else if (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch '))
 		void streams.omniscient.write('>p1 ' + line);
-	else if (line.startsWith('eval '))
-		void streams.omniscient.write('>eval JSON.stringify(pokemon("p1", "' + line.slice(5) + '").toJSON(), null, 4)');
+	else if (line.startsWith('p1 ') || line.startsWith('p2 '))
+		void streams.omniscient.write('>eval JSON.stringify(pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '").toJSON(), null, 4)');
 });
