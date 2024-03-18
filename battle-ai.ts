@@ -95,7 +95,7 @@ const rl = readline.createInterface({
 });
 
 rl.on('line', (line) => {
-	fs.appendFileSync('Battle_Log.txt', line);
+	fs.appendFileSync('Battle_Log.txt', '>' + line);
 
 	if (line == 'q')
 		process.exit();
