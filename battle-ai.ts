@@ -77,7 +77,7 @@ void (async () => {
 			console.log(chunk);
 		}
 
-		if (chunk.startsWith('|win|'))
+		if (chunk.includes('\n|win|'))
 			process.exit();
 	}
 })();
@@ -97,7 +97,7 @@ const rl = readline.createInterface({
 rl.on('line', (line) => {
 	if (line == 'q')
 		process.exit();
-	else if (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch '))
+	else if (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch ') || line == 'auto')
 		void streams.omniscient.write('>p1 ' + line);
 	else if (line.startsWith('p1 ') || line.startsWith('p2 '))
 		void streams.omniscient.write('>eval JSON.stringify(pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '").toJSON(), null, 4)');
