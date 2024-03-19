@@ -138,11 +138,23 @@ rl.on('line', (line) => {
 			'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line == 'order') {
-		let command = 'let ret = "\\nP1:\\n";' +
-			'for (let i in p1.pokemon) ret += (Number(i) + 1) + " " + p1.pokemon[i].name + (p1.pokemon[i].isActive ? " [active]" : "") + (p1.pokemon[i].fainted ? " [fainted]" : "") + "\\n";' +
-			'ret += "\\nP2:\\n";' +
-			'for (let i in p2.pokemon) ret += (Number(i) + 1) + " " + p2.pokemon[i].name + (p2.pokemon[i].isActive ? " [active]" : "") + (p2.pokemon[i].fainted ? " [fainted]" : "") + "\\n";' +
-			'ret;';
+		let command = 'let ret = "\\nP1:\\n";';
+		command += 'for (let i in p1.pokemon) ret += (Number(i) + 1) + " " + ' +
+				'p1.pokemon[i].getDetails().shared.split("|")[0] + ' +
+				'(p1.pokemon[i].isActive ? " [active]" : "") + ' +
+				'(p1.pokemon[i].fainted ? " [fainted]" : "") + "\\n";' +
+				'ret += "\\nP2:\\n";';
+		if (player_control_ai)
+			command += 'for (let i in p2.pokemon) ret += (Number(i) + 1) + " " + ' +
+			'p2.pokemon[i].getDetails().shared.split("|")[0] + ' +
+			'(p2.pokemon[i].isActive ? " [active]" : "") + ' +
+			'(p2.pokemon[i].fainted ? " [fainted]" : "") + "\\n";'
+		else
+			command += 'for (let i in p2.pokemon) ret += (Number(i) + 1) + " " + ' +
+			'(!p2.pokemon[i].isActive && !p2.pokemon[i].fainted ? "???" : p2.pokemon[i].getDetails().shared.split("|")[0]) + ' +
+			'(p2.pokemon[i].isActive ? " [active]" : "") + ' +
+			'(p2.pokemon[i].fainted ? " [fainted]" : "") + "\\n";'
+		command += 'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line.startsWith('>')) {
 		streams.omniscient.write('>eval ' + line.slice(1));
