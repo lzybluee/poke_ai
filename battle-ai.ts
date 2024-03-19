@@ -39,10 +39,12 @@ let get_team = (input) => {
 if (process.argv.length == 4) {
 	team = get_team(process.argv[3]);
 	ai_team = get_team(process.argv[3]);
-} else if (process.argv.length == 5) {
+} else if (process.argv.length >= 5) {
 	team = get_team(process.argv[3]);
 	ai_team = get_team(process.argv[4]);
 }
+
+let player_control_ai = (process.argv.length == 6);
 
 fs.writeFileSync('Team_Player.txt', team);
 fs.writeFileSync('Team_AI.txt', ai_team);
@@ -60,8 +62,10 @@ const p2spec = {
 	team: ai_team,
 };
 
-const ai = new RandomPlayerAI(streams.p2);
-void ai.start();
+if (!player_control_ai) {
+	const ai = new RandomPlayerAI(streams.p2);
+	ai.start();
+}
 
 void (async () => {
 	for await (const chunk of streams.omniscient) {
@@ -82,6 +86,16 @@ void (async () => {
 	}
 })();
 
+if (player_control_ai) {
+	void (async () => {
+		for await (const chunk of streams.p2) {
+			if (chunk.startsWith('|error|')) {
+				console.log(chunk);
+			}
+		}
+	})();
+}
+
 streams.omniscient.write(`>start ${JSON.stringify(spec)}
 >player p1 ${JSON.stringify(p1spec)}
 >player p2 ${JSON.stringify(p2spec)}`);
@@ -99,10 +113,13 @@ rl.on('line', (line) => {
 
 	if (line == 'q') {
 		process.exit();
-	} else if (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch ') || line == 'auto') {
-		void streams.omniscient.write('>p1 ' + line);
+	} else if (player_control_ai && (line.startsWith('p1 team ') || line.startsWith('p1 move ') || line.startsWith('p1 switch ') || line == 'p1 auto' ||
+				line.startsWith('p2 team ') || line.startsWith('p2 move ') || line.startsWith('p2 switch ') || line == 'p2 auto')) {
+		streams.omniscient.write('>' + line);
+	} else if (!player_control_ai && (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch ') || line == 'auto')) {
+		streams.omniscient.write('>p1 ' + line);
 	} else if (line.startsWith('p1 ') || line.startsWith('p2 ')) {
-		let p1 = line.startsWith('p1 ');
+		let p1 = player_control_ai || line.startsWith('p1 ');
 		let command = 'let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
 			'let ret = "\\n" + p.getDetails().shared.split("|")[0] + "\\n";' +
 			(p1 ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
