@@ -71,7 +71,7 @@ void (async () => {
 
 void (async () => {
 	for await (const chunk of streams.p1) {
-		if (chunk.startsWith('||>>>')) {
+		if (chunk.startsWith('||>>> let ')) {
 			console.log(chunk.split('\n').slice(2, -1).join('\n'));
 		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
@@ -105,12 +105,12 @@ rl.on('line', (line) => {
 		let p1 = line.startsWith('p1 ');
 		let command = 'let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
 			'let ret = "\\n" + p.getDetails().shared.split("|")[0] + "\\n";' +
-			'ret += "Type: " + p.getTypes().join(", ") + "\\n";' +
+			(p1 ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
 			(p1 ? 'ret += "Ability: " + p.getAbility().name + "\\n";' : '') +
 			(p1 ? 'ret += "Item: " + p.getItem().name + "\\n";' : '') +
 			(p1 ? 'for (let i in p.getMoves()) ret += "Move " + (Number(i) + 1) + ": " + p.getMoves()[i].move + ", " + p.getMoves()[i].pp + "/" + p.getMoves()[i].maxpp + "\\n";' : '') +
 			'if (p.status) ret += "Status: " + p.getStatus().name + "\\n";' +
-			'ret += "Boosts: " + Object.keys(p.boosts).map(k => k + " " + p.boosts[k]).join(", ") + "\\n";' +
+			'if (p.isActive) ret += "Stages: " + Object.keys(p.boosts).map(k => k + " " + p.boosts[k]).join(", ") + "\\n";' +
 			'ret;'
 		streams.omniscient.write('>eval ' + command);
 	} else if (line == 'field') {
@@ -122,5 +122,7 @@ rl.on('line', (line) => {
 			'if (Object.keys(p2.sideConditions).length > 0) ret += "P2: " + Object.keys(p2.sideConditions).map(k => p2.getSideCondition(k).name).join(", ") + "\\n";' +
 			'ret;'
 		streams.omniscient.write('>eval ' + command);
+	} else if (line.startsWith('>')) {
+		streams.omniscient.write('>eval ' + line.slice(1));
 	}
 });
