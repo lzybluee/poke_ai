@@ -128,7 +128,7 @@ rl.on('line', (line) => {
 			(p1 ? 'for (let i in p.getMoves()) ret += "Move " + (Number(i) + 1) + ": " + p.getMoves()[i].move + ", " + p.getMoves()[i].pp + "/" + p.getMoves()[i].maxpp + "\\n";' : '') +
 			'if (p.status) ret += "Status: " + p.getStatus().name + "\\n";' +
 			'if (p.isActive) ret += "Stages: " + Object.keys(p.boosts).map(k => k + " " + p.boosts[k]).join(", ") + "\\n";' +
-			'ret;'
+			'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line == 'field') {
 		let command = 'let ret = "\\n";' +
@@ -137,7 +137,14 @@ rl.on('line', (line) => {
 			'if (Object.keys(battle.field.pseudoWeather).length > 0) ret += "Other: " + Object.keys(battle.field.pseudoWeather).map(k => battle.field.getPseudoWeather(k).name).join(", ") + "\\n";' +
 			'if (Object.keys(p1.sideConditions).length > 0) ret += "P1: " + Object.keys(p1.sideConditions).map(k => p1.getSideCondition(k).name).join(", ") + "\\n";' +
 			'if (Object.keys(p2.sideConditions).length > 0) ret += "P2: " + Object.keys(p2.sideConditions).map(k => p2.getSideCondition(k).name).join(", ") + "\\n";' +
-			'ret;'
+			'ret;';
+		streams.omniscient.write('>eval ' + command);
+	} else if (line == 'order') {
+		let command = 'let ret = "\\nP1:\\n";' +
+			'for (let i in p1.pokemon) ret += (Number(i) + 1) + " " + p1.pokemon[i].name + (p1.pokemon[i].isActive ? " [active]" : "") + (p1.pokemon[i].fainted ? " [fainted]" : "") + "\\n";' +
+			(!player_control_ai ? '' : 'ret += "\\nP2:\\n";' +
+				'for (let i in p2.pokemon) ret += (Number(i) + 1) + " " + p2.pokemon[i].name + (p2.pokemon[i].isActive ? " [active]" : "") + (p2.pokemon[i].fainted ? " [fainted]" : "") + "\\n";') +
+			'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line.startsWith('>')) {
 		streams.omniscient.write('>eval ' + line.slice(1));
