@@ -71,10 +71,7 @@ void (async () => {
 
 void (async () => {
 	for await (const chunk of streams.p1) {
-		if (chunk.includes('JSON.stringify') && !chunk.includes('<<< error: ')) {
-			fs.writeFileSync('Status.txt', chunk.replaceAll('||', ''));
-			console.log('|Status.txt updated!');
-		} else if (!chunk.startsWith('|request|')) {
+		if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
 		}
 
