@@ -125,7 +125,7 @@ rl.on('line', (line) => {
 			(p1 ? 'for (let i in p.getMoves()) ret += "Move " + (Number(i) + 1) + ": " + p.getMoves()[i].move + ", " + p.getMoves()[i].pp + "/" + p.getMoves()[i].maxpp + "\\n";' : '') +
 			'if (p.status) ret += "Status: " + p.getStatus().name + "\\n";' +
 			'let stages = Object.keys(p.boosts).filter(k => p.boosts[k] != 0);' +
-			'if (stages.length > 0) ret += "Stages: " + stages.map(k => k + " " + p.boosts[k]).join(", ") + "\\n";' +
+			'if (stages.length > 0) ret += "Stages: " + stages.map(k => k + " " + (p.boosts[k] > 0 ? "+" : "") + p.boosts[k]).join(", ") + "\\n";' +
 			'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line == 'field') {
