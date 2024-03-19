@@ -113,10 +113,10 @@ rl.on('line', (line) => {
 
 	if (line == 'q') {
 		process.exit();
-	} else if (player_control_ai && (line.startsWith('p1 team ') || line.startsWith('p1 move ') || line.startsWith('p1 switch ') || line == 'p1 auto' ||
-				line.startsWith('p2 team ') || line.startsWith('p2 move ') || line.startsWith('p2 switch ') || line == 'p2 auto')) {
+	} else if (player_control_ai && (line.startsWith('p1 team') || line.startsWith('p1 move') || line.startsWith('p1 switch') || line == 'p1 auto' ||
+				line.startsWith('p2 team') || line.startsWith('p2 move') || line.startsWith('p2 switch') || line == 'p2 auto')) {
 		streams.omniscient.write('>' + line);
-	} else if (!player_control_ai && (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch ') || line == 'auto')) {
+	} else if (!player_control_ai && (line.startsWith('team') || line.startsWith('move') || line.startsWith('switch') || line == 'auto')) {
 		streams.omniscient.write('>p1 ' + line);
 	} else if (line.startsWith('p1 ') || line.startsWith('p2 ')) {
 		let p1 = player_control_ai || line.startsWith('p1 ');
