@@ -71,7 +71,9 @@ void (async () => {
 
 void (async () => {
 	for await (const chunk of streams.p1) {
-		if (!chunk.startsWith('|request|')) {
+		if (chunk.startsWith('||>>>')) {
+			console.log(chunk.split('\n').slice(2, -1).join('\n'));
+		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
 		}
 
