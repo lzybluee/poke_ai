@@ -18,10 +18,11 @@ import {RandomPlayerAI} from '../tools/random-player-ai';
 
 const streams = getPlayerStreams(new BattleStream());
 const fs = require('fs');
+const readline = require('readline');
 
 const spec = {
 	formatid: process.argv[2],
-	seed: [19, 86, 10, 25],
+	seed: [19, 86, 10, 25]
 };
 
 let team = '';
@@ -55,11 +56,11 @@ fs.writeFileSync('Battle_Log.txt', '');
 
 const p1spec = {
 	name: "Player",
-	team: team,
+	team: team
 };
 const p2spec = {
 	name: "AI",
-	team: ai_team,
+	team: ai_team
 };
 
 if (!player_control_ai) {
@@ -75,11 +76,10 @@ void (async () => {
 
 void (async () => {
 	for await (const chunk of streams.p1) {
-		if (chunk.startsWith('||>>> let ')) {
+		if (chunk.startsWith('||>>> let '))
 			console.log(chunk.split('\n').slice(2, -1).join('\n'));
-		} else if (!chunk.startsWith('|request|')) {
+		else if (!chunk.startsWith('|request|'))
 			console.log(chunk);
-		}
 
 		if (chunk.includes('\n|win|'))
 			process.exit();
@@ -89,9 +89,8 @@ void (async () => {
 if (player_control_ai) {
 	void (async () => {
 		for await (const chunk of streams.p2) {
-			if (chunk.startsWith('|error|')) {
+			if (chunk.startsWith('|error|'))
 				console.log(chunk);
-			}
 		}
 	})();
 }
@@ -99,8 +98,6 @@ if (player_control_ai) {
 streams.omniscient.write(`>start ${JSON.stringify(spec)}
 >player p1 ${JSON.stringify(p1spec)}
 >player p2 ${JSON.stringify(p2spec)}`);
-
-const readline = require('readline');
 
 const rl = readline.createInterface({
 	input: process.stdin,
