@@ -21,6 +21,7 @@ const fs = require('fs');
 
 const spec = {
 	formatid: process.argv[2],
+	seed: [19, 86, 10, 25],
 };
 
 let team = '';
@@ -82,7 +83,7 @@ void (async () => {
 	}
 })();
 
-void streams.omniscient.write(`>start ${JSON.stringify(spec)}
+streams.omniscient.write(`>start ${JSON.stringify(spec)}
 >player p1 ${JSON.stringify(p1spec)}
 >player p2 ${JSON.stringify(p2spec)}`);
 
@@ -97,10 +98,30 @@ const rl = readline.createInterface({
 rl.on('line', (line) => {
 	fs.appendFileSync('Battle_Log.txt', '\n>' + line + '\n');
 
-	if (line == 'q')
+	if (line == 'q') {
 		process.exit();
-	else if (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch ') || line == 'auto')
+	} else if (line.startsWith('team ') || line.startsWith('move ') || line.startsWith('switch ') || line == 'auto') {
 		void streams.omniscient.write('>p1 ' + line);
-	else if (line.startsWith('p1 ') || line.startsWith('p2 '))
-		void streams.omniscient.write('>eval JSON.stringify(pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '").toJSON(), null, 4)');
+	} else if (line.startsWith('p1 ') || line.startsWith('p2 ')) {
+		let p1 = line.startsWith('p1 ');
+		let command = 'let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
+			'let ret = "\\n" + p.getDetails().shared.split("|")[0] + "\\n";' +
+			'ret += "Type: " + p.getTypes().join(", ") + "\\n";' +
+			(p1 ? 'ret += "Ability: " + p.getAbility().name + "\\n";' : '') +
+			(p1 ? 'ret += "Item: " + p.getItem().name + "\\n";' : '') +
+			(p1 ? 'for (let i in p.getMoves()) ret += "Move " + (Number(i) + 1) + ": " + p.getMoves()[i].move + ", " + p.getMoves()[i].pp + "/" + p.getMoves()[i].maxpp + "\\n";' : '') +
+			'if (p.status) ret += "Status: " + p.getStatus().name + "\\n";' +
+			'ret += "Boosts: " + Object.keys(p.boosts).map(k => k + " " + p.boosts[k]).join(", ") + "\\n";' +
+			'ret;'
+		streams.omniscient.write('>eval ' + command);
+	} else if (line == 'field') {
+		let command = 'let ret = "\\n";' +
+			'if (battle.field.weather) ret += "Weather: " + battle.field.getWeather().name + "\\n";' +
+			'if (battle.field.terrain) ret += "Terrain: " + battle.field.getTerrain().name + "\\n";' +
+			'if (Object.keys(battle.field.pseudoWeather).length > 0) ret += "Other: " + Object.keys(battle.field.pseudoWeather).map(k => battle.field.getPseudoWeather(k).name).join(", ") + "\\n";' +
+			'if (Object.keys(p1.sideConditions).length > 0) ret += "P1: " + Object.keys(p1.sideConditions).map(k => p1.getSideCondition(k).name).join(", ") + "\\n";' +
+			'if (Object.keys(p2.sideConditions).length > 0) ret += "P2: " + Object.keys(p2.sideConditions).map(k => p2.getSideCondition(k).name).join(", ") + "\\n";' +
+			'ret;'
+		streams.omniscient.write('>eval ' + command);
+	}
 });
