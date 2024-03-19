@@ -140,8 +140,8 @@ rl.on('line', (line) => {
 	} else if (line == 'order') {
 		let command = 'let ret = "\\nP1:\\n";' +
 			'for (let i in p1.pokemon) ret += (Number(i) + 1) + " " + p1.pokemon[i].name + (p1.pokemon[i].isActive ? " [active]" : "") + (p1.pokemon[i].fainted ? " [fainted]" : "") + "\\n";' +
-			(!player_control_ai ? '' : 'ret += "\\nP2:\\n";' +
-				'for (let i in p2.pokemon) ret += (Number(i) + 1) + " " + p2.pokemon[i].name + (p2.pokemon[i].isActive ? " [active]" : "") + (p2.pokemon[i].fainted ? " [fainted]" : "") + "\\n";') +
+			'ret += "\\nP2:\\n";' +
+			'for (let i in p2.pokemon) ret += (Number(i) + 1) + " " + p2.pokemon[i].name + (p2.pokemon[i].isActive ? " [active]" : "") + (p2.pokemon[i].fainted ? " [fainted]" : "") + "\\n";' +
 			'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line.startsWith('>')) {
