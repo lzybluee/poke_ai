@@ -120,14 +120,13 @@ rl.on('line', (line) => {
 		let show_all = player_control_ai || words[0] == 'p1';
 		let command = 'let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
 			'let ret = "\\n";' +
-			(show_all ? 'ret += p.getDetails().shared.split("|")[0] + "\\n";' :
-				'ret += (!p.isActive && !p.fainted ? "???" : p.getDetails().shared.split("|")[0]) + "\\n";') +
+			(show_all ? 'ret += p.getDetails().shared.replace("|", " (") + ")\\n";' :
+				'ret += (!p.isActive && !p.fainted ? "???" : p.getDetails().shared.replace("|", " (") + ")") + "\\n";') +
 			'if (p.isActive && p.baseSpecies.name != p.species.name) ret += "Species: " + p.species.name + "\\n";' +
 			(show_all ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
 			(show_all ? 'ret += "Ability: " + p.getAbility().name + "\\n";' : '') +
-			(show_all ? 'ret += "Item: " + p.getItem().name + "\\n";' : '') +
+			(show_all ? 'ret += "Item: " + (p.item ? p.getItem().name : "-") + "\\n";' : '') +
 			(show_all ? 'for (let i in p.getMoves()) ret += "Move " + (Number(i) + 1) + ": " + p.getMoves()[i].move + ", " + p.getMoves()[i].pp + "/" + p.getMoves()[i].maxpp + "\\n";' : '') +
-			'if (p.status) ret += "Status: " + p.getStatus().name + "\\n";' +
 			'let stages = Object.keys(p.boosts).filter(k => p.boosts[k] != 0);' +
 			'if (stages.length > 0) ret += "Stages: " + stages.map(k => k + " " + (p.boosts[k] > 0 ? "+" : "") + p.boosts[k]).join(", ") + "\\n";' +
 			'ret;';
@@ -144,20 +143,17 @@ rl.on('line', (line) => {
 	} else if (line == 'teams') {
 		let command = 'let ret = "\\nP1:\\n";';
 		command += 'for (let i in p1.pokemon) ret += (Number(i) + 1) + ". " + ' +
-				'p1.pokemon[i].getDetails().shared.split("|")[0] + ' +
-				'(p1.pokemon[i].isActive ? " [active]" : "") + ' +
-				'(p1.pokemon[i].fainted ? " [fainted]" : "") + "\\n";' +
-				'ret += "\\nP2:\\n";';
+			'(p1.pokemon[i].isActive ? "* " : "") + ' +
+			'p1.pokemon[i].getDetails().shared.replace("|", " (") + ")" + "\\n";' +
+			'ret += "\\nP2:\\n";';
 		if (player_control_ai)
 			command += 'for (let i in p2.pokemon) ret += (Number(i) + 1) + ". " + ' +
-			'p2.pokemon[i].getDetails().shared.split("|")[0] + ' +
-			'(p2.pokemon[i].isActive ? " [active]" : "") + ' +
-			'(p2.pokemon[i].fainted ? " [fainted]" : "") + "\\n";'
+				'(p2.pokemon[i].isActive ? "* " : "") + ' +
+				'p2.pokemon[i].getDetails().shared.replace("|", " (") + ")" + "\\n";';
 		else
 			command += 'for (let i in p2.pokemon) ret += (Number(i) + 1) + ". " + ' +
-			'(!p2.pokemon[i].isActive && !p2.pokemon[i].fainted ? "???" : p2.pokemon[i].getDetails().shared.split("|")[0]) + ' +
-			'(p2.pokemon[i].isActive ? " [active]" : "") + ' +
-			'(p2.pokemon[i].fainted ? " [fainted]" : "") + "\\n";'
+				'(p2.pokemon[i].isActive ? "* " : "") + ' +
+				'(!p2.pokemon[i].isActive && !p2.pokemon[i].fainted ? "???" : p2.pokemon[i].getDetails().shared.replace("|", " (") + ")") + "\\n";';
 		command += 'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line.startsWith('>')) {
