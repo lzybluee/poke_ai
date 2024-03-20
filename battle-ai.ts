@@ -87,7 +87,11 @@ void (async () => {
 				else
 					console.log(lines[i]);
 			}
-			console.log(pokes.sort(() => Math.random() - 0.5).join('\n') + '\n' + lines.slice(-1));
+			for (let i = pokes.length - 1; i > 0; i--) {
+				let j = Math.floor(Math.random() * (i + 1));
+				[pokes[i], pokes[j]] = [pokes[j], pokes[i]];
+			}
+			console.log(pokes.join('\n') + '\n' + lines.slice(-1));
 		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
 		}
