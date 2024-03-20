@@ -108,15 +108,16 @@ const rl = readline.createInterface({
 rl.on('line', (line) => {
 	fs.appendFileSync('Battle_Log.txt', '\n>' + line + '\n');
 
+	let words = line.split(' ');
+
 	if (line == 'q') {
 		process.exit();
-	} else if (player_control_ai && (line.startsWith('p1 team') || line.startsWith('p1 move') || line.startsWith('p1 switch') || line == 'p1 auto' ||
-				line.startsWith('p2 team') || line.startsWith('p2 move') || line.startsWith('p2 switch') || line == 'p2 auto')) {
+	} else if (player_control_ai && ['p1', 'p2'].includes(words[0]) && ['team', 'move', 'switch', 'auto'].includes(words[1])) {
 		streams.omniscient.write('>' + line);
-	} else if (!player_control_ai && (line.startsWith('team') || line.startsWith('move') || line.startsWith('switch') || line == 'auto')) {
+	} else if (!player_control_ai && ['team', 'move', 'switch', 'auto'].includes(words[0])) {
 		streams.omniscient.write('>p1 ' + line);
-	} else if (line.startsWith('p1 ') || line.startsWith('p2 ')) {
-		let show_all = player_control_ai || line.startsWith('p1 ');
+	} else if (['p1', 'p2'].includes(words[0])) {
+		let show_all = player_control_ai || words[0] == 'p1';
 		let command = 'let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
 			'let ret = "\\n";' +
 			(show_all ? 'ret += p.getDetails().shared.split("|")[0] + "\\n";' :
@@ -139,7 +140,7 @@ rl.on('line', (line) => {
 			'if (Object.keys(p2.sideConditions).length > 0) ret += "P2: " + Object.keys(p2.sideConditions).map(k => p2.getSideCondition(k).name).join(", ") + "\\n";' +
 			'ret;';
 		streams.omniscient.write('>eval ' + command);
-	} else if (line == 'order') {
+	} else if (line == 'teams') {
 		let command = 'let ret = "\\nP1:\\n";';
 		command += 'for (let i in p1.pokemon) ret += (Number(i) + 1) + ". " + ' +
 				'p1.pokemon[i].getDetails().shared.split("|")[0] + ' +
