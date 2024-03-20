@@ -116,13 +116,15 @@ rl.on('line', (line) => {
 	} else if (!player_control_ai && (line.startsWith('team') || line.startsWith('move') || line.startsWith('switch') || line == 'auto')) {
 		streams.omniscient.write('>p1 ' + line);
 	} else if (line.startsWith('p1 ') || line.startsWith('p2 ')) {
-		let p1 = player_control_ai || line.startsWith('p1 ');
+		let show_all = player_control_ai || line.startsWith('p1 ');
 		let command = 'let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
-			'let ret = "\\n" + p.getDetails().shared.split("|")[0] + "\\n";' +
-			(p1 ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
-			(p1 ? 'ret += "Ability: " + p.getAbility().name + "\\n";' : '') +
-			(p1 ? 'ret += "Item: " + p.getItem().name + "\\n";' : '') +
-			(p1 ? 'for (let i in p.getMoves()) ret += "Move " + (Number(i) + 1) + ": " + p.getMoves()[i].move + ", " + p.getMoves()[i].pp + "/" + p.getMoves()[i].maxpp + "\\n";' : '') +
+			'let ret = "\\n";' +
+			(show_all ? 'ret += p.getDetails().shared.split("|")[0] + "\\n";' :
+				'ret += (!p.isActive && !p.fainted ? "???" : p.getDetails().shared.split("|")[0]) + "\\n";') +
+			(show_all ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
+			(show_all ? 'ret += "Ability: " + p.getAbility().name + "\\n";' : '') +
+			(show_all ? 'ret += "Item: " + p.getItem().name + "\\n";' : '') +
+			(show_all ? 'for (let i in p.getMoves()) ret += "Move " + (Number(i) + 1) + ": " + p.getMoves()[i].move + ", " + p.getMoves()[i].pp + "/" + p.getMoves()[i].maxpp + "\\n";' : '') +
 			'if (p.status) ret += "Status: " + p.getStatus().name + "\\n";' +
 			'let stages = Object.keys(p.boosts).filter(k => p.boosts[k] != 0);' +
 			'if (stages.length > 0) ret += "Stages: " + stages.map(k => k + " " + (p.boosts[k] > 0 ? "+" : "") + p.boosts[k]).join(", ") + "\\n";' +
