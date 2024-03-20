@@ -122,6 +122,7 @@ rl.on('line', (line) => {
 			'let ret = "\\n";' +
 			(show_all ? 'ret += p.getDetails().shared.split("|")[0] + "\\n";' :
 				'ret += (!p.isActive && !p.fainted ? "???" : p.getDetails().shared.split("|")[0]) + "\\n";') +
+			'if (p.isActive && p.baseSpecies.name != p.species.name) ret += "Species: " + p.species.name + "\\n";' +
 			(show_all ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
 			(show_all ? 'ret += "Ability: " + p.getAbility().name + "\\n";' : '') +
 			(show_all ? 'ret += "Item: " + p.getItem().name + "\\n";' : '') +
