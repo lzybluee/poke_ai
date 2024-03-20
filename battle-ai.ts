@@ -76,10 +76,21 @@ void (async () => {
 
 void (async () => {
 	for await (const chunk of streams.p1) {
-		if (chunk.startsWith('||>>> let '))
+		if (chunk.startsWith('||>>> /*')) {
 			console.log(chunk.split('\n').slice(2, -1).join('\n'));
-		else if (!chunk.startsWith('|request|'))
+		} else if (!player_control_ai && chunk.endsWith('|teampreview')) {
+			let lines = chunk.split('\n');
+			let pokes = [];
+			for (let i in lines.slice(0, -1)) {
+				if (lines[i].startsWith('|poke|p2|'))
+					pokes.push(lines[i]);
+				else
+					console.log(lines[i]);
+			}
+			console.log(pokes.sort(() => Math.random() - 0.5).join('\n') + '\n' + lines.slice(-1));
+		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
+		}
 
 		if (chunk.includes('\n|win|'))
 			process.exit();
@@ -118,7 +129,7 @@ rl.on('line', (line) => {
 		streams.omniscient.write('>p1 ' + line);
 	} else if (['p1', 'p2'].includes(words[0])) {
 		let show_all = player_control_ai || words[0] == 'p1';
-		let command = 'let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
+		let command = '/*' + line + '*/ let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
 			'let ret = "\\n";' +
 			(show_all ? 'ret += p.getDetails().shared.replace("|", " (") + ")\\n";' :
 				'ret += (!p.isActive && !p.fainted ? "???" : p.getDetails().shared.replace("|", " (") + ")") + "\\n";') +
@@ -132,7 +143,7 @@ rl.on('line', (line) => {
 			'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line == 'field') {
-		let command = 'let ret = "\\n";' +
+		let command = '/*' + line + '*/ let ret = "\\n";' +
 			'if (battle.field.weather) ret += "Weather: " + battle.field.getWeather().name + "\\n";' +
 			'if (battle.field.terrain) ret += "Terrain: " + battle.field.getTerrain().name + "\\n";' +
 			'if (Object.keys(battle.field.pseudoWeather).length > 0) ret += "Other: " + Object.keys(battle.field.pseudoWeather).map(k => battle.field.getPseudoWeather(k).name).join(", ") + "\\n";' +
@@ -141,7 +152,7 @@ rl.on('line', (line) => {
 			'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line == 'teams') {
-		let command = 'let ret = "\\nP1:\\n";';
+		let command = '/*' + line + '*/ let ret = "\\nP1:\\n";';
 		command += 'for (let i in p1.pokemon) ret += (Number(i) + 1) + ". " + ' +
 			'(p1.pokemon[i].isActive ? "* " : "") + ' +
 			'p1.pokemon[i].getDetails().shared.replace("|", " (") + ")" + "\\n";' +
