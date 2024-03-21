@@ -96,12 +96,12 @@ void (async () => {
 		} else if (!player_control_ai && chunk.endsWith('|teampreview')) {
 			let lines = chunk.split('\n');
 			let pokes : string[] = [];
-			for (let i in lines.slice(0, -1)) {
-				if (lines[i].startsWith('|poke|p2|')) {
-					pokes.push(lines[i]);
+			for (const line of lines.slice(0, -1)) {
+				if (line.startsWith('|poke|p2|')) {
+					pokes.push(line);
 				} else {
-					console.log(lines[i]);
-					fs.appendFileSync('Battle_Log.txt', lines[i] + '\n');
+					console.log(line);
+					fs.appendFileSync('Battle_Log.txt', line + '\n');
 				}
 			}
 			for (let i = pokes.length - 1; i > 0; i--) {
@@ -160,7 +160,7 @@ rl.on('line', (line) => {
 			(show_all ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
 			(show_all ? 'ret += "Ability: " + p.getAbility().name + "\\n";' : '') +
 			(show_all ? 'ret += "Item: " + (p.item ? p.getItem().name : "-") + "\\n";' : '') +
-			(show_all ? 'for (let i in p.getMoves()) ret += "Move " + (Number(i) + 1) + ": " + p.getMoves()[i].move + ", " + p.getMoves()[i].pp + "/" + p.getMoves()[i].maxpp + "\\n";' : '') +
+			(show_all ? 'for (let i = 0; i < p.getMoves().length; i++) ret += "Move " + (i + 1) + ": " + p.getMoves()[i].move + ", " + p.getMoves()[i].pp + "/" + p.getMoves()[i].maxpp + "\\n";' : '') +
 			'let stages = Object.keys(p.boosts).filter(k => p.boosts[k] != 0);' +
 			'if (stages.length > 0) ret += "Stages: " + stages.map(k => k + " " + (p.boosts[k] > 0 ? "+" : "") + p.boosts[k]).join(", ") + "\\n";' +
 			'ret;';
@@ -176,16 +176,16 @@ rl.on('line', (line) => {
 		streams.omniscient.write('>eval ' + command);
 	} else if (line == 'teams') {
 		let command = '/*' + line + '*/ let ret = "P1:\\n";';
-		command += 'for (let i in p1.pokemon) ret += (Number(i) + 1) + ". " + ' +
+		command += 'for (let i = 0; i < p1.pokemon.length; i++) ret += (i + 1) + ". " + ' +
 			'(p1.pokemon[i].isActive ? "* " : "") + ' +
 			'p1.pokemon[i].getDetails().shared.replace("|", " (") + ")" + "\\n";' +
 			'ret += "\\nP2:\\n";';
 		if (player_control_ai)
-			command += 'for (let i in p2.pokemon) ret += (Number(i) + 1) + ". " + ' +
+			command += 'for (let i = 0; i < p2.pokemon.length; i++) ret += (i + 1) + ". " + ' +
 				'(p2.pokemon[i].isActive ? "* " : "") + ' +
 				'p2.pokemon[i].getDetails().shared.replace("|", " (") + ")" + "\\n";';
 		else
-			command += 'for (let i in p2.pokemon) ret += (Number(i) + 1) + ". " + ' +
+			command += 'for (let i = 0; i < p2.pokemon.length; i++) ret += (i + 1) + ". " + ' +
 				'(p2.pokemon[i].isActive ? "* " : "") + ' +
 				'(!p2.pokemon[i].isActive && !p2.pokemon[i].fainted ? "???" : p2.pokemon[i].getDetails().shared.replace("|", " (") + ")") + "\\n";';
 		command += 'ret;';
