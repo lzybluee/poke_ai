@@ -156,7 +156,7 @@ rl.on('line', (line) => {
 			'let ret = "";' +
 			(show_all ? 'ret += p.getDetails().shared.replace("|", " (") + ")\\n";' :
 				'ret += (!p.isActive && !p.fainted ? "???" : p.getDetails().shared.replace("|", " (") + ")") + "\\n";') +
-			'if (p.isActive && p.baseSpecies.name != p.species.name) ret += "Species: " + p.species.name + "\\n";' +
+			'if (p.isActive && p.baseSpecies.baseSpecies != p.species.baseSpecies) ret += "Species: " + p.species.name + "\\n";' +
 			(show_all ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
 			(show_all ? 'ret += "Ability: " + p.getAbility().name + "\\n";' : '') +
 			(show_all ? 'ret += "Item: " + (p.item ? p.getItem().name : "-") + "\\n";' : '') +
