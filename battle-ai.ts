@@ -70,7 +70,8 @@ if (!player_control_ai) {
 
 void (async () => {
 	for await (const chunk of streams.omniscient) {
-		fs.appendFileSync('Battle_Log.txt', chunk);
+		if (player_control_ai || !chunk.endsWith('|teampreview'))
+			fs.appendFileSync('Battle_Log.txt', chunk);
 	}
 })();
 
@@ -81,7 +82,7 @@ void (async () => {
 			if (lines.length == 2) {
 				console.log(lines[1].replace('<<< "', '').slice(0, -1));
 			} else {
-				for (let i in lines) {
+				for (let i = 0; i < lines.length; i++) {
 					if (i == 1) {
 						console.log(lines[i].replace('<<< "', ''));
 					} else if (i == lines.length - 1) {
@@ -94,18 +95,22 @@ void (async () => {
 			}
 		} else if (!player_control_ai && chunk.endsWith('|teampreview')) {
 			let lines = chunk.split('\n');
-			let pokes = [];
+			let pokes : string[] = [];
 			for (let i in lines.slice(0, -1)) {
-				if (lines[i].startsWith('|poke|p2|'))
+				if (lines[i].startsWith('|poke|p2|')) {
 					pokes.push(lines[i]);
-				else
+				} else {
 					console.log(lines[i]);
+					fs.appendFileSync('Battle_Log.txt', lines[i] + '\n');
+				}
 			}
 			for (let i = pokes.length - 1; i > 0; i--) {
 				let j = Math.floor(Math.random() * (i + 1));
 				[pokes[i], pokes[j]] = [pokes[j], pokes[i]];
 			}
-			console.log(pokes.join('\n') + '\n' + lines.slice(-1));
+			let text = pokes.join('\n') + '\n' + lines.slice(-1)[0];
+			console.log(text);
+			fs.appendFileSync('Battle_Log.txt', text);
 		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
 		}
