@@ -10,6 +10,7 @@
  */
 
 import {BattleStream, getPlayerStreams, Teams} from '..';
+import {Formats} from '../../config/formats';
 import {RandomPlayerAI} from '../tools/random-player-ai';
 
 /*********************************************************************
@@ -19,6 +20,24 @@ import {RandomPlayerAI} from '../tools/random-player-ai';
 const streams = getPlayerStreams(new BattleStream());
 const fs = require('fs');
 const readline = require('readline');
+
+if (process.env.PLAYER_CONTROL_AI)
+	console.log('PLAYER_CONTROL_AI');
+
+if (process.env.EXACT_HP)
+	console.log('EXACT_HP');
+
+let player_control_ai = (process.env.PLAYER_CONTROL_AI !== undefined);
+let exact_hp = (process.env.EXACT_HP !== undefined) || player_control_ai;
+
+if (!exact_hp) {
+	for (const format of Formats) {
+		if (format.name == '[Gen 7] Custom Game' || format.name == '[Gen 7] Doubles Custom Game') {
+			format.debug = false;
+			format.ruleset.push('HP Percentage Mod', 'Illusion Level Mod');
+		}
+	}
+}
 
 const spec = {
 	formatid: process.argv[2],
@@ -40,12 +59,10 @@ let get_team = (input) => {
 if (process.argv.length == 4) {
 	team = get_team(process.argv[3]);
 	ai_team = get_team(process.argv[3]);
-} else if (process.argv.length >= 5) {
+} else if (process.argv.length == 5) {
 	team = get_team(process.argv[3]);
 	ai_team = get_team(process.argv[4]);
 }
-
-let player_control_ai = (process.argv.length == 6);
 
 fs.writeFileSync('Team_Player.txt', team);
 fs.writeFileSync('Team_AI.txt', ai_team);
@@ -154,7 +171,7 @@ rl.on('line', (line) => {
 		let show_all = player_control_ai || words[0] == 'p1';
 		let command = '/*' + line + '*/ let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
 			'let ret = "";' +
-			(show_all ? 'ret += p.getDetails().shared.replace("|", " (") + ")\\n";' :
+			(show_all ? 'ret += p.getDetails().secret.replace("|", " (") + ")\\n";' :
 				'ret += (!p.isActive && !p.fainted ? "???" : p.getDetails().shared.replace("|", " (") + ")") + "\\n";') +
 			'if (p.isActive && p.baseSpecies.baseSpecies != p.species.baseSpecies) ret += "Species: " + p.species.name + "\\n";' +
 			(show_all ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
@@ -178,12 +195,12 @@ rl.on('line', (line) => {
 		let command = '/*' + line + '*/ let ret = "P1:\\n";';
 		command += 'for (let i = 0; i < p1.pokemon.length; i++) ret += (i + 1) + ". " + ' +
 			'(p1.pokemon[i].isActive ? "* " : "") + ' +
-			'p1.pokemon[i].getDetails().shared.replace("|", " (") + ")" + "\\n";' +
+			'p1.pokemon[i].getDetails().secret.replace("|", " (") + ")" + "\\n";' +
 			'ret += "\\nP2:\\n";';
 		if (player_control_ai)
 			command += 'for (let i = 0; i < p2.pokemon.length; i++) ret += (i + 1) + ". " + ' +
 				'(p2.pokemon[i].isActive ? "* " : "") + ' +
-				'p2.pokemon[i].getDetails().shared.replace("|", " (") + ")" + "\\n";';
+				'p2.pokemon[i].getDetails().secret.replace("|", " (") + ")" + "\\n";';
 		else
 			command += 'for (let i = 0; i < p2.pokemon.length; i++) ret += (i + 1) + ". " + ' +
 				'(p2.pokemon[i].isActive ? "* " : "") + ' +
@@ -192,5 +209,7 @@ rl.on('line', (line) => {
 		streams.omniscient.write('>eval ' + command);
 	} else if (line.startsWith('>')) {
 		streams.omniscient.write('>eval ' + line.slice(1));
+	} else {
+		console.log('Wrong command!');
 	}
 });
