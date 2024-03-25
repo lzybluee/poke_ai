@@ -2,6 +2,7 @@ import sys
 
 pokes = {}
 
+
 def load_data(gen):
     if gen:
         gen = gen.split('|')[-1]
@@ -11,7 +12,7 @@ def load_data(gen):
     entry = []
     last = ''
     with open('../poke/zh_list/gen' + gen + '/Species.txt', 'r', encoding='utf8') as file:
-        for line in file.readlines():
+        for line in file.readlines() + ['']:
             if not line.strip() and entry:
                 if ' (' not in entry[1]:
                     entry[1] += ' (' + last + '*)'
@@ -24,10 +25,11 @@ def load_data(gen):
 
 
 def get_stats(poke):
-    info = poke.split('|')[3].replace('’', "'").replace('é', 'e').replace('♀', '-F').replace('♂', '-M').split(', ')
+    info = poke.split('|')[3].replace('’', "'").replace(
+        'é', 'e').replace('♀', '-F').replace('♂', '-M').split(', ')
     name = info[0]
     while name not in pokes and '-' in name:
-        name = name[0 : name.rfind('-')]
+        name = name[0: name.rfind('-')]
     level = '100'
     if len(info) > 1 and info[1].startswith('L'):
         level = info[1][1:]
