@@ -31,7 +31,7 @@ def get_stats(poke):
     level = '100'
     if len(info) > 1 and info[1].startswith('L'):
         level = info[1][1:]
-    return 'Level ' + level + '\n' + pokes[name]
+    return 'Level ' + level + ('' if name == info[0] else ' [' + info[0] + ']') + '\n' + pokes[name]
 
 
 def get_preview(p1, p2):
