@@ -17,19 +17,24 @@ def load_data(gen):
                     entry[1] += ' (' + last + '*)'
                 else:
                     last = entry[1].split(' (')[1].replace(')', '')
-                pokes[entry[1].split(' (')[0]] = '\n'.join(entry)
+                pokes[entry[1].split(' (')[0]] = '\n'.join(entry[1:])
                 entry = []
             else:
                 entry.append(line.strip())
 
 
 def get_stats(poke):
-    name = poke.split('|')[3].split(', ')[0].replace('-*', '')
-    return pokes[name]
+    info = poke.split('|')[3].split(', ')
+    name = info[0].replace('-*', '')
+    level = '100'
+    if len(info) > 1 and info[1].startswith('L'):
+        level = info[1][1:]
+    return 'Level ' + level + '\n' + pokes[name]
 
 
 def get_preview(p1, p2):
     with open('Teams_Preview.txt', 'w', encoding='utf8') as file:
+        file.write('"' + sys.argv[1] + '"\n\n')
         file.write('[P1]' + '\n\n')
         for p in p1.split(';'):
             file.write(get_stats(p) + '\n\n')
