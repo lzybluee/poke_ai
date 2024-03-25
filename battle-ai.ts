@@ -20,6 +20,7 @@ import {RandomPlayerAI} from '../tools/random-player-ai';
 const streams = getPlayerStreams(new BattleStream());
 const fs = require('fs');
 const readline = require('readline');
+const { exec } = require('child_process');
 
 if (process.env.PLAYER_CONTROL_AI)
 	console.log('PLAYER_CONTROL_AI');
@@ -108,20 +109,30 @@ void (async () => {
 					}
 				}
 			}
-		} else if (!player_control_ai && chunk.endsWith('|teampreview')) {
+		} else if (chunk.endsWith('|teampreview')) {
 			let lines = chunk.split('\n');
-			let pokes : string[] = [];
+			let gen = '';
+			let p1_pokes : string[] = [];
+			let p2_pokes : string[] = [];
 			for (const line of lines.slice(0, -1)) {
+				if (line.startsWith('|gen|'))
+					gen = line;
+				else if (line.startsWith('|poke|p1|'))
+					p1_pokes.push(line);
+
 				if (line.startsWith('|poke|p2|'))
-					pokes.push(line);
+					p2_pokes.push(line);
 				else
 					console.log(line);
 			}
-			for (let i = pokes.length - 1; i > 0; i--) {
-				let j = Math.floor(Math.random() * (i + 1));
-				[pokes[i], pokes[j]] = [pokes[j], pokes[i]];
+			if (!player_control_ai) {
+				for (let i = p2_pokes.length - 1; i > 0; i--) {
+					let j = Math.floor(Math.random() * (i + 1));
+					[p2_pokes[i], p2_pokes[j]] = [p2_pokes[j], p2_pokes[i]];
+				}
 			}
-			console.log(pokes.join('\n') + '\n' + lines.slice(-1)[0]);
+			console.log(p2_pokes.join('\n') + '\n' + lines.slice(-1)[0]);
+			exec('python preview.py "' + gen + '#' + p1_pokes.join(';') + '#' + p2_pokes.join(';') + '"');
 		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
 		}
