@@ -45,16 +45,20 @@ const spec = {
 	seed: [19, 86, 10, 25]
 };
 
+let generator = null;
+
 let team = '';
 let ai_team = '';
 
 let get_team = (input) => {
-	if (input.includes('|'))
+	if (input.includes('|')) {
 		return input;
-	else if (input.endsWith('.txt'))
+	} else if (input.endsWith('.txt')) {
 		return fs.readFileSync(input, {encoding: 'utf8'});
-	else
-		return Teams.pack(Teams.generate(input));
+	} else {
+		generator ??= Teams.getGenerator(input);
+		return Teams.pack(generator.getTeam());
+	}
 };
 
 if (process.argv.length == 4) {
