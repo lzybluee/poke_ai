@@ -33,7 +33,7 @@ let exact_hp = (process.env.EXACT_HP !== undefined) || player_control_ai;
 
 if (!exact_hp) {
 	for (const format of Formats) {
-		if (format.name == '[Gen 7] Custom Game' || format.name == '[Gen 7] Doubles Custom Game') {
+		if (format.name && format.name.startsWith('[Gen ') && format.name.endsWith(' Custom Game')) {
 			format.debug = false;
 			format.ruleset.push('HP Percentage Mod', 'Illusion Level Mod');
 		}
