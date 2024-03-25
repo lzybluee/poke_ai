@@ -26,6 +26,8 @@ def load_data(gen):
 def get_stats(poke):
     info = poke.split('|')[3].split(', ')
     name = info[0].replace('-*', '')
+    while name not in pokes and '-' in name:
+        name = name[0 : name.rfind('-')]
     level = '100'
     if len(info) > 1 and info[1].startswith('L'):
         level = info[1][1:]
