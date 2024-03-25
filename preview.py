@@ -24,7 +24,7 @@ def load_data(gen):
 
 
 def get_stats(poke):
-    info = poke.split('|')[3].split(', ')
+    info = poke.split('|')[3].replace('’', "'").replace('é', 'e').replace('♀', '-F').replace('♂', '-M').split(', ')
     name = info[0]
     while name not in pokes and '-' in name:
         name = name[0 : name.rfind('-')]
