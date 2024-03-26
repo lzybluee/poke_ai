@@ -57,6 +57,8 @@ let get_team = (input) => {
 		return fs.readFileSync(input, {encoding: 'utf8'});
 	} else {
 		generator ??= Teams.getGenerator(input);
+		if (generator.factoryTier)
+			console.log('Tier: ' + generator.factoryTier);
 		return Teams.pack(generator.getTeam());
 	}
 };
@@ -136,7 +138,7 @@ void (async () => {
 				}
 			}
 			console.log(p2_pokes.join('\n') + '\n' + lines.slice(-1)[0]);
-			exec('python preview.py "' + gen + '#' + p1_pokes.join(';') + '#' + p2_pokes.join(';') + '"');
+			exec('python preview.py "' + gen + '#' + (generator ? generator.factoryTier : '') + '#' + p1_pokes.join(';') + '#' + p2_pokes.join(';') + '"');
 		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
 		}

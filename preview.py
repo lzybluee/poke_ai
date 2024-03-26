@@ -36,13 +36,15 @@ def get_stats(poke):
     return 'Level ' + level + ('' if name == info[0] else ' [' + info[0] + ']') + '\n' + pokes[name]
 
 
-def get_preview(p1, p2):
+def get_preview(tier, p1, p2):
     with open('Teams_Preview.txt', 'w', encoding='utf8') as file:
         file.write('"' + sys.argv[1] + '"\n\n')
-        file.write('[P1]' + '\n\n')
+        if tier:
+            file.write('[Tier] ' + tier + '\n\n')
+        file.write('P1:' + '\n\n')
         for p in p1.split(';'):
             file.write(get_stats(p) + '\n\n')
-        file.write('\n[P2]' + '\n\n')
+        file.write('\nP2:' + '\n\n')
         for p in p2.split(';'):
             file.write(get_stats(p) + '\n\n')
 
@@ -50,4 +52,4 @@ def get_preview(p1, p2):
 if __name__ == '__main__':
     args = sys.argv[1].split('#')
     load_data(args[0])
-    get_preview(args[1], args[2])
+    get_preview(args[1], args[2], args[3])
