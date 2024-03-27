@@ -88,7 +88,7 @@ const p2spec = {
 };
 
 if (!player_control_ai) {
-	const ai = new RandomPlayerAI(streams.p2);
+	const ai = new RandomPlayerAI(streams.p2, {move: 0.9, mega: 0.9, seed: [19, 86, 10, 25]});
 	ai.start();
 }
 
