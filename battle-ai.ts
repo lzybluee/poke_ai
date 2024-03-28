@@ -168,6 +168,8 @@ const rl = readline.createInterface({
 	terminal: false
 });
 
+const commands = ['move', 'switch', 'shift', 'team', 'pass', 'skip', 'auto', 'default'];
+
 rl.on('line', (line) => {
 	fs.appendFileSync('Battle_Log.txt', '\n>' + line + '\n');
 
@@ -175,9 +177,9 @@ rl.on('line', (line) => {
 
 	if (line == 'q') {
 		process.exit();
-	} else if (player_control_ai && ['p1', 'p2'].includes(words[0]) && ['team', 'move', 'switch', 'auto'].includes(words[1])) {
+	} else if (player_control_ai && ['p1', 'p2'].includes(words[0]) && commands.includes(words[1])) {
 		streams.omniscient.write('>' + line);
-	} else if (!player_control_ai && ['team', 'move', 'switch', 'auto'].includes(words[0])) {
+	} else if (!player_control_ai && commands.includes(words[0])) {
 		streams.omniscient.write('>p1 ' + line);
 	} else if (['p1', 'p2'].includes(words[0])) {
 		let show_all = player_control_ai || words[0] == 'p1';
