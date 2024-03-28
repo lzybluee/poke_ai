@@ -30,6 +30,7 @@ if (process.env.EXACT_HP)
 
 let player_control_ai = (process.env.PLAYER_CONTROL_AI !== undefined);
 let exact_hp = (process.env.EXACT_HP !== undefined) || player_control_ai;
+let battle_seed = [Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000)];
 
 if (!exact_hp) {
 	for (const format of Formats) {
@@ -42,7 +43,7 @@ if (!exact_hp) {
 
 const spec = {
 	formatid: process.argv[2],
-	seed: [19, 86, 10, 25]
+	seed: battle_seed
 };
 
 let generator = null;
@@ -76,7 +77,7 @@ fs.writeFileSync('Team_AI.txt', ai_team);
 fs.writeFileSync('Team_Player_Export.txt', Teams.export(Teams.unpack(team)).replaceAll('  \n', '\n'));
 fs.writeFileSync('Team_AI_Export.txt', Teams.export(Teams.unpack(ai_team)).replaceAll('  \n', '\n'));
 
-fs.writeFileSync('Battle_Log.txt', '');
+fs.writeFileSync('Battle_Log.txt', 'Seed: ' + battle_seed + '\n');
 
 const p1spec = {
 	name: "Player",
@@ -88,7 +89,7 @@ const p2spec = {
 };
 
 if (!player_control_ai) {
-	const ai = new RandomPlayerAI(streams.p2, {move: 0.9, mega: 0.9, seed: [19, 86, 10, 25]});
+	const ai = new RandomPlayerAI(streams.p2, {move: 0.9, mega: 0.9, seed: battle_seed});
 	ai.start();
 }
 
