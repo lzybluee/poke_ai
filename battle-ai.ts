@@ -170,7 +170,7 @@ const rl = readline.createInterface({
 rl.on('line', (line) => {
 	fs.appendFileSync('Battle_Log.txt', '\n>' + line + '\n');
 
-	let words = line.split(' ');
+	let words = line.trim().split(/\W/);
 
 	if (line == 'q') {
 		process.exit();
