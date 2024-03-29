@@ -121,24 +121,16 @@ void (async () => {
 			let gen = '';
 			let p1_pokes : string[] = [];
 			let p2_pokes : string[] = [];
-			for (const line of lines.slice(0, -1)) {
+			for (const line of lines) {
 				if (line.startsWith('|gen|'))
 					gen = line;
 				else if (line.startsWith('|poke|p1|'))
 					p1_pokes.push(line);
-
-				if (line.startsWith('|poke|p2|'))
+				else if (line.startsWith('|poke|p2|'))
 					p2_pokes.push(line);
-				else
-					console.log(line);
+
+				console.log(line);
 			}
-			if (!player_control_ai) {
-				for (let i = p2_pokes.length - 1; i > 0; i--) {
-					let j = Math.floor(Math.random() * (i + 1));
-					[p2_pokes[i], p2_pokes[j]] = [p2_pokes[j], p2_pokes[i]];
-				}
-			}
-			console.log(p2_pokes.join('\n') + '\n' + lines.slice(-1)[0]);
 			exec('python preview.py "' + gen + '#' + (generator ? generator.factoryTier : '') + '#' + p1_pokes.join(';') + '#' + p2_pokes.join(';') + '"');
 		} else if (!chunk.startsWith('|request|')) {
 			console.log(chunk);
