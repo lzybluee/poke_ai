@@ -30,7 +30,7 @@ if (process.env.EXACT_HP)
 
 let player_control_ai = (process.env.PLAYER_CONTROL_AI !== undefined);
 let exact_hp = (process.env.EXACT_HP !== undefined) || player_control_ai;
-let battle_seed = [Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000)];
+let game_seed = [Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000)];
 
 if (!exact_hp) {
 	for (const format of Formats) {
@@ -41,20 +41,18 @@ if (!exact_hp) {
 	}
 }
 
-const spec = {
-	formatid: process.argv[2],
-	seed: battle_seed
-};
-
 let generator = null;
 
 let team = '';
 let ai_team = '';
+let pre_teams = 0;
 
 let get_team = (input) => {
 	if (input.includes('|')) {
+		pre_teams++;
 		return input;
 	} else if (input.endsWith('.txt')) {
+		pre_teams++;
 		return fs.readFileSync(input, {encoding: 'utf8'});
 	} else {
 		generator ??= Teams.getGenerator(input);
@@ -77,7 +75,17 @@ fs.writeFileSync('Team_AI.txt', ai_team);
 fs.writeFileSync('Team_Player_Export.txt', Teams.export(Teams.unpack(team)).replaceAll('  \n', '\n'));
 fs.writeFileSync('Team_AI_Export.txt', Teams.export(Teams.unpack(ai_team)).replaceAll('  \n', '\n'));
 
-fs.writeFileSync('Battle_Log.txt', 'Seed: ' + battle_seed + '\n');
+if (pre_teams == 2) {
+	game_seed = fs.readFileSync('Battle_Log.txt', {encoding: 'utf8'})
+					.match(/Seed: (\d+),(\d+),(\d+),(\d+)/).slice(1, 5).map(Number);
+}
+
+const spec = {
+	formatid: process.argv[2],
+	seed: game_seed
+};
+
+fs.writeFileSync('Battle_Log.txt', 'Seed: ' + game_seed + '\n');
 
 const p1spec = {
 	name: "Player",
@@ -89,7 +97,7 @@ const p2spec = {
 };
 
 if (!player_control_ai) {
-	const ai = new RandomPlayerAI(streams.p2, {move: 0.9, mega: 0.9, seed: battle_seed});
+	const ai = new RandomPlayerAI(streams.p2, {move: 0.9, mega: 0.9, seed: game_seed});
 	ai.start();
 }
 
