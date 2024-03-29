@@ -30,7 +30,6 @@ if (process.env.EXACT_HP)
 
 let player_control_ai = (process.env.PLAYER_CONTROL_AI !== undefined);
 let exact_hp = (process.env.EXACT_HP !== undefined) || player_control_ai;
-let game_seed = [Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000)];
 
 if (!exact_hp) {
 	for (const format of Formats) {
@@ -75,9 +74,14 @@ fs.writeFileSync('Team_AI.txt', ai_team);
 fs.writeFileSync('Team_Player_Export.txt', Teams.export(Teams.unpack(team)).replaceAll('  \n', '\n'));
 fs.writeFileSync('Team_AI_Export.txt', Teams.export(Teams.unpack(ai_team)).replaceAll('  \n', '\n'));
 
+let game_seed = null;
+
 if (pre_teams == 2) {
 	game_seed = fs.readFileSync('Battle_Log.txt', {encoding: 'utf8'})
 					.match(/Seed: (\d+),(\d+),(\d+),(\d+)/).slice(1, 5).map(Number);
+} else {
+	game_seed = [Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000),
+					Math.floor(Math.random() * 0x10000), Math.floor(Math.random() * 0x10000)];
 }
 
 const spec = {
