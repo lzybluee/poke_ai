@@ -54,10 +54,13 @@ let get_team = (input) => {
 		pre_teams++;
 		return fs.readFileSync(input, {encoding: 'utf8'});
 	} else {
-		generator ??= Teams.getGenerator(input);
+		generator ??= Teams.getGenerator(input.split('+')[0]);
+		if (input.split('+')[1])
+			generator.factoryTier = input.split('+')[1];
+		let gen_team = generator.getTeam();
 		if (generator.factoryTier)
 			console.log('Tier: ' + generator.factoryTier);
-		return Teams.pack(generator.getTeam());
+		return Teams.pack(gen_team);
 	}
 };
 
