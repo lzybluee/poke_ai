@@ -110,7 +110,7 @@ if (!player_control_ai) {
 
 void (async () => {
 	for await (const chunk of streams.omniscient)
-			fs.appendFileSync('Battle_Log.txt', chunk);
+		fs.appendFileSync('Battle_Log.txt', chunk);
 })();
 
 void (async () => {
