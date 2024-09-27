@@ -12,6 +12,7 @@
 import {BattleStream, getPlayerStreams, Teams} from '..';
 import {Formats} from '../../config/formats';
 import {RandomPlayerAI} from '../tools/random-player-ai';
+import {PRNG} from '../prng';
 
 /*********************************************************************
  * Run AI
@@ -228,6 +229,13 @@ rl.on('line', (line) => {
 				'(!p2.pokemon[i].isActive && !p2.pokemon[i].fainted ? "???" : p2.pokemon[i].getDetails().shared.replace("|", " (") + ")") + "\\n";';
 		command += 'ret;';
 		streams.omniscient.write('>eval ' + command);
+	} else if (line == 'random') {
+		let order = [1, 2, 3, 4, 5, 6];
+		let prng = new PRNG();
+		prng.shuffle(order);
+		let command = 'team ' + order.join('');
+		console.log('>' + command);
+		streams.omniscient.write('>p1 ' + command);
 	} else if (line.startsWith('>')) {
 		streams.omniscient.write('>eval ' + line.slice(1));
 	} else {
