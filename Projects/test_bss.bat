@@ -1,3 +1,3 @@
 cd showdown_test
-copy env_custom env
+copy env_bss env
 python run.py
