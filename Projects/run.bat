@@ -1,14 +1,34 @@
 cd pokemon-showdown
-node build
 start /b node pokemon-showdown start 9102
-sleep 10
+
+:loop1
+sleep 2
+netstat -an | find "0.0.0.0:9102"
+if %errorlevel%==0 (
+    goto end1
+) else (
+    goto loop1
+)
+:end1
+
 cd ../showdown
 start /b python run.py
 cd ../showdown_factory
 start /b python run.py
 cd ../showdown_bss
 start /b python run.py
+
 cd ../pokemon-showdown-client
 start /b npx http-server -p 9101
-sleep 5
+
+:loop2
+sleep 2
+netstat -an | find "0.0.0.0:9101"
+if %errorlevel%==0 (
+    goto end2
+) else (
+    goto loop2
+)
+:end2
+
 start "" "http://localhost:9101/play.pokemonshowdown.com/testclient.html?~~localhost:9102"
