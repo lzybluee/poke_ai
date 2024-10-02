@@ -1,15 +1,35 @@
-From 7ec0819b1c2b512b76a2bb12393d4234e34ceb1b Mon Sep 17 00:00:00 2001
+From 75f68c9547e3c10a7136cbbfce7f0293e5df092f Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Wed, 2 Oct 2024 19:31:58 +0800
+Date: Wed, 2 Oct 2024 20:33:05 +0800
 Subject: [PATCH] Patch
 
 ---
+ build-tools/update                            |  4 +-
  .../src/battle-animations-moves.ts            | 52 +++++++++----------
  play.pokemonshowdown.com/src/battle-dex.ts    | 13 ++---
  play.pokemonshowdown.com/src/battle-sound.ts  |  2 +-
  play.pokemonshowdown.com/testclient.html      |  3 +-
- 4 files changed, 32 insertions(+), 38 deletions(-)
+ 5 files changed, 34 insertions(+), 40 deletions(-)
 
+diff --git a/build-tools/update b/build-tools/update
+index 4d99acd8..30a4bbd6 100755
+--- a/build-tools/update
++++ b/build-tools/update
+@@ -186,12 +186,12 @@ let news = '[failed to retrieve news]';
+ try {
+ 	stdout = child_process.execSync('php ' + path.resolve(thisDir, 'news-embed.php'));
+ } catch (e) {
+-	console.log("git hook failed to retrieve news (exec command failed):\n" + (e.error + e.stderr + e.stdout));
++	// console.log("git hook failed to retrieve news (exec command failed):\n" + (e.error + e.stderr + e.stdout));
+ }
+ try {
+ 	if (stdout) [newsid, news] = JSON.parse(stdout);
+ } catch (e) {
+-	console.log("git hook failed to retrieve news (parsing JSON failed):\n" + e.stack);
++	// console.log("git hook failed to retrieve news (parsing JSON failed):\n" + e.stack);
+ }
+ 
+ indexContents = indexContents.replace(/<!-- newsid -->/g, newsid);
 diff --git a/play.pokemonshowdown.com/src/battle-animations-moves.ts b/play.pokemonshowdown.com/src/battle-animations-moves.ts
 index a54122b0..8e55430a 100644
 --- a/play.pokemonshowdown.com/src/battle-animations-moves.ts
