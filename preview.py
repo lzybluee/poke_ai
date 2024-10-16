@@ -35,7 +35,7 @@ def get_stats(poke):
     if len(info) > 1 and info[1].startswith('L'):
         level = int(info[1][1:])
     stats = pokes[name]
-    if level != 100:
+    if 50 < level < 100:
         def repl(match):
             return f'spe: {match.group(1)} ({round(int(match.group(1)) * level / 100)})'
         stats = re.sub(r'spe: (\d+)', repl, stats)
