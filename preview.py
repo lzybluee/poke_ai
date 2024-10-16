@@ -1,4 +1,5 @@
 import sys
+import re
 
 pokes = {}
 
@@ -29,11 +30,16 @@ def get_stats(poke):
         'é', 'e').replace('♀', '-F').replace('♂', '-M').split(', ')
     name = info[0]
     while name not in pokes and '-' in name:
-        name = name[0: name.rfind('-')]
-    level = '100'
+        name = name[:name.rfind('-')]
+    level = 100
     if len(info) > 1 and info[1].startswith('L'):
-        level = info[1][1:]
-    return 'Level ' + level + ('' if name == info[0] else ' [' + info[0] + ']') + '\n' + pokes[name]
+        level = int(info[1][1:])
+    stats = pokes[name]
+    if level != 100:
+        def repl(match):
+            return f'spe: {match.group(1)} ({round(int(match.group(1)) * level / 100)})'
+        stats = re.sub(r'spe: (\d+)', repl, stats)
+    return f'Level {level}{'' if name == info[0] else ' [' + info[0] + ']'}\n{stats}'
 
 
 def get_preview(tier, p1, p2):
