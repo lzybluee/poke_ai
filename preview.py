@@ -36,8 +36,7 @@ def get_stats(poke):
         level = int(info[1][1:])
     stats = pokes[name]
     if 50 < level < 100:
-        def repl(match):
-            return f'spe: {match.group(1)} ({round(int(match.group(1)) * level / 100)})'
+        repl = lambda match : f'spe: {match.group(1)} ({round(int(match.group(1)) * level / 100)})'
         stats = re.sub(r'spe: (\d+)', repl, stats)
     return f'Level {level}{'' if name == info[0] else ' [' + info[0] + ']'}\n{stats}'
 
