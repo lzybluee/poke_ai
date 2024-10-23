@@ -109,17 +109,29 @@ if (!player_control_ai) {
 	ai.start();
 }
 
+let log_command = '/*log*/ const fs = require("fs"); let log = "";' +
+		'for (const line of battle.inputLog) { if (!line.startsWith(">eval ")) log += line.substring(1) + "\\n"; };' +
+		'fs.writeFileSync("Input_Log.txt", log);'
+
 void (async () => {
 	for await (const chunk of streams.omniscient) {
+		if(chunk.startsWith('||>>> /*log*/'))
+			continue;
+
 		if(chunk.startsWith('||>>> /*'))
 			fs.appendFileSync('Battle_Log.txt', chunk.substring(chunk.indexOf('\n') + 1));
 		else
 			fs.appendFileSync('Battle_Log.txt', chunk);
+
+		streams.omniscient.write('>eval ' + log_command);
 	}
 })();
 
 void (async () => {
 	for await (const chunk of streams.p1) {
+		if(chunk.startsWith('||>>> /*log*/'))
+			continue;
+
 		if (chunk.startsWith('||>>> /*') && !chunk.includes('<<< error:')) {
 			let lines = chunk.split('\n');
 			if (lines.length == 2) {
