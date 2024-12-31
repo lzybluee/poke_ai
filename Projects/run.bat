@@ -11,11 +11,11 @@ if %errorlevel%==0 (
 )
 :end1
 
-cd ../showdown
+cd ../foul-play
 start /b python run.py
-cd ../showdown_factory
+cd ../foul-play_factory
 start /b python run.py
-cd ../showdown_bss
+cd ../foul-play_bss
 start /b python run.py
 
 cd ../pokemon-showdown-client
