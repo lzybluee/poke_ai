@@ -1,18 +1,20 @@
-From 75f68c9547e3c10a7136cbbfce7f0293e5df092f Mon Sep 17 00:00:00 2001
+From 6492ce5f24b4dd6c9a3ecbfbf0f1e6d8ca8ea743 Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Wed, 2 Oct 2024 20:33:05 +0800
+Date: Sat, 4 Jan 2025 10:59:54 +0800
 Subject: [PATCH] Patch
 
 ---
  build-tools/update                            |  4 +-
+ play.pokemonshowdown.com/js/client-battle.js  | 49 +++++++++++++++++
  .../src/battle-animations-moves.ts            | 52 +++++++++----------
  play.pokemonshowdown.com/src/battle-dex.ts    | 13 ++---
  play.pokemonshowdown.com/src/battle-sound.ts  |  2 +-
+ play.pokemonshowdown.com/style/battle.css     |  2 +
  play.pokemonshowdown.com/testclient.html      |  3 +-
- 5 files changed, 34 insertions(+), 40 deletions(-)
+ 7 files changed, 85 insertions(+), 40 deletions(-)
 
 diff --git a/build-tools/update b/build-tools/update
-index 4d99acd8..30a4bbd6 100755
+index 23d52a89..c79a882a 100755
 --- a/build-tools/update
 +++ b/build-tools/update
 @@ -186,12 +186,12 @@ let news = '[failed to retrieve news]';
@@ -30,8 +32,75 @@ index 4d99acd8..30a4bbd6 100755
  }
  
  indexContents = indexContents.replace(/<!-- newsid -->/g, newsid);
+diff --git a/play.pokemonshowdown.com/js/client-battle.js b/play.pokemonshowdown.com/js/client-battle.js
+index 6e2f220f..69ffcc74 100644
+--- a/play.pokemonshowdown.com/js/client-battle.js
++++ b/play.pokemonshowdown.com/js/client-battle.js
+@@ -10,6 +10,7 @@
+ 			this.choice = undefined;
+ 			/** are move/switch/team-preview controls currently being shown? */
+ 			this.controlsShown = false;
++			this.speed = 'normal';
+ 
+ 			this.battlePaused = false;
+ 			this.autoTimerActivated = false;
+@@ -265,6 +266,54 @@
+ 			var switchViewpointButton = '<p><button class="button" name="switchViewpoint"><i class="fa fa-random"></i> Switch viewpoint</button></p>';
+ 			this.controlsShown = false;
+ 
++			var speedTable = {
++				hyperfast: 'Hyperfast',
++				fast: 'Fast',
++				normal: 'Normal',
++				slow: 'Slow',
++				reallyslow: 'Really Slow'
++			};
++
++			switchViewpointButton += '<div class="chooser leftchooser speedchooser"><em>Speed:</em><div>';
++			for (speed in speedTable) {
++				if (speedTable.hasOwnProperty(speed)) {
++					if (speed == this.speed)
++						switchViewpointButton += '<button value="' + speed + '" class="sel">' + speedTable[speed] + '</button>';
++					else
++						switchViewpointButton += '<button value="' + speed + '">' + speedTable[speed] + '</button>';
++				}
++			}
++			switchViewpointButton += '</div></div>';
++
++			var self = this;
++			this.$el.on('click', '.chooser button', function (e) {
++				self.speed = e.currentTarget.value
++				var $chooser = $(e.currentTarget).closest('.chooser');
++				var valueElem = $chooser.find('button[value=' + self.speed + ']');
++				$chooser.find('button').removeClass('sel');
++				valueElem.addClass('sel');
++
++				var delayTable = {
++					hyperfast: 1,
++					fast: 1,
++					normal: 1,
++					slow: 1000,
++					reallyslow: 3000
++				};
++				var fadeTable = {
++					hyperfast: 40,
++					fast: 50,
++					normal: 300,
++					slow: 500,
++					reallyslow: 1000
++				};
++
++				console.log(self.speed)
++				self.battle.messageShownTime = delayTable[self.speed];
++				self.battle.messageFadeTime = fadeTable[self.speed];
++				self.battle.scene.updateAcceleration();
++			});
++
+ 			if (this.battle.seeking !== null) {
+ 
+ 				// battle is seeking
 diff --git a/play.pokemonshowdown.com/src/battle-animations-moves.ts b/play.pokemonshowdown.com/src/battle-animations-moves.ts
-index a54122b0..8e55430a 100644
+index 6f02d170..cd102b8e 100644
 --- a/play.pokemonshowdown.com/src/battle-animations-moves.ts
 +++ b/play.pokemonshowdown.com/src/battle-animations-moves.ts
 @@ -711,7 +711,7 @@ export const BattleMoveAnims: AnimTable = {
@@ -52,7 +121,7 @@ index a54122b0..8e55430a 100644
  				w: 96,
  				h: 96,
  			};
-@@ -3572,7 +3572,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -3610,7 +3610,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	morningsun: {
  		anim(scene, [attacker, defender]) {
@@ -61,7 +130,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('wisp', {
  				x: attacker.x + 40,
  				y: attacker.y - 40,
-@@ -3625,7 +3625,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -3663,7 +3663,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	moonlight: {
  		anim(scene, [attacker]) {
@@ -70,7 +139,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('moon', {
  				x: attacker.x,
  				y: attacker.y + 150,
-@@ -3708,7 +3708,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -3746,7 +3746,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	cosmicpower: {
  		anim(scene, [attacker]) {
@@ -79,7 +148,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('wisp', {
  				x: attacker.x + 40,
  				y: attacker.y - 40,
-@@ -5548,7 +5548,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -5586,7 +5586,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	seismictoss: {
  		anim(scene, [attacker, defender]) {
@@ -88,7 +157,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('wisp', {
  				x: defender.x,
  				y: defender.y + 10,
-@@ -8380,7 +8380,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -8418,7 +8418,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	meteormash: {
  		anim(scene, [attacker, defender]) {
@@ -97,7 +166,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect(attacker.sp, {
  				x: attacker.leftof(20),
  				y: attacker.y,
-@@ -18794,7 +18794,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -18832,7 +18832,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	psystrike: {
  		anim(scene, [attacker, defender]) {
@@ -106,7 +175,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('poisonwisp', {
  				x: defender.x - 100,
  				y: defender.y,
-@@ -19656,7 +19656,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -19694,7 +19694,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	moonblast: {
  		anim(scene, [attacker, defender]) {
@@ -115,7 +184,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('moon', {
  				x: attacker.x,
  				y: attacker.y,
-@@ -19961,7 +19961,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -19999,7 +19999,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	wish: {
  		anim(scene, [attacker]) {
@@ -124,7 +193,7 @@ index a54122b0..8e55430a 100644
  
  			scene.showEffect('wisp', {
  				x: attacker.x,
-@@ -19975,7 +19975,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -20013,7 +20013,7 @@ export const BattleMoveAnims: AnimTable = {
  			}, 'accel');
  		},
  		residualAnim(scene, [attacker]) {
@@ -133,7 +202,7 @@ index a54122b0..8e55430a 100644
  
  			scene.showEffect('wisp', {
  				x: attacker.x,
-@@ -21224,7 +21224,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -21262,7 +21262,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	dracometeor: {
  		anim(scene, [attacker, defender]) {
@@ -142,7 +211,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('flareball', {
  				x: defender.leftof(-200),
  				y: defender.y + 175,
-@@ -22729,7 +22729,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -22767,7 +22767,7 @@ export const BattleMoveAnims: AnimTable = {
  			let ystep = (defender.x - 200 - attacker.x) / 5;
  			let zstep = (defender.z - attacker.z) / 5;
  
@@ -151,7 +220,7 @@ index a54122b0..8e55430a 100644
  
  			for (let i = 0; i < 5; i++) {
  				scene.showEffect('energyball', {
-@@ -23088,7 +23088,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -23126,7 +23126,7 @@ export const BattleMoveAnims: AnimTable = {
  			let ystep = 20;
  			let zstep = 0;
  
@@ -160,7 +229,7 @@ index a54122b0..8e55430a 100644
  
  			scene.showEffect('sword', {
  				x: attacker.leftof(10),
-@@ -23373,7 +23373,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -23411,7 +23411,7 @@ export const BattleMoveAnims: AnimTable = {
  			let ystep = (defender.x - 200 - attacker.x) / 5;
  			let zstep = (defender.z - attacker.z) / 5;
  
@@ -169,7 +238,7 @@ index a54122b0..8e55430a 100644
  
  			for (let i = 0; i < 5; i++) {
  				scene.showEffect('mudwisp', {
-@@ -23573,7 +23573,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -23611,7 +23611,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	sheercold: { // Reminder: Improve this later
  		anim(scene, [attacker, defender]) {
@@ -178,7 +247,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('icicle', {
  				x: defender.x,
  				y: defender.y,
-@@ -23591,7 +23591,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -23629,7 +23629,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	glaciallance: {
  		anim(scene, [attacker, ...defenders]) {
@@ -187,7 +256,7 @@ index a54122b0..8e55430a 100644
  			for (const defender of defenders) {
  				scene.showEffect('icicle', {
  					x: defender.x,
-@@ -25906,7 +25906,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -25944,7 +25944,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	dragonascent: {
  		anim(scene, [attacker, defender]) {
@@ -196,7 +265,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('iceball', {
  				x: attacker.leftof(-25),
  				y: attacker.y + 250,
-@@ -29397,7 +29397,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -29435,7 +29435,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	plasmafists: {
  		anim(scene, [attacker, defender]) {
@@ -205,7 +274,7 @@ index a54122b0..8e55430a 100644
  			scene.backgroundEffect('#000000', 1000, 0.6);
  			scene.backgroundEffect('#FFFFFF', 300, 0.6, 1000);
  			scene.showEffect('electroball', {
-@@ -29640,7 +29640,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -29678,7 +29678,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	collisioncourse: {
  		anim(scene, [attacker, defender]) {
@@ -214,7 +283,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect(attacker.sp, {
  				x: attacker.x,
  				y: attacker.y,
-@@ -29786,7 +29786,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -29824,7 +29824,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	electrodrift: {
  		anim(scene, [attacker, defender]) {
@@ -223,7 +292,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect(attacker.sp, {
  				x: attacker.x,
  				y: attacker.y,
-@@ -33809,7 +33809,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -33847,7 +33847,7 @@ export const BattleMoveAnims: AnimTable = {
  	oceanicoperetta: {
  		anim(scene, [attacker, defender]) {
  			scene.backgroundEffect('linear-gradient(#000000 20%, #0000DD)', 2700, 0.4);
@@ -232,7 +301,7 @@ index a54122b0..8e55430a 100644
  			scene.showEffect('iceball', {
  				x: attacker.x,
  				y: attacker.y + 120,
-@@ -34132,7 +34132,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -34170,7 +34170,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	splinteredstormshards: {
  		anim(scene, [attacker, defender]) {
@@ -241,7 +310,7 @@ index a54122b0..8e55430a 100644
  			scene.backgroundEffect('linear-gradient(#FFC720 15%, #421800)', 2700, 0.7);
  			scene.backgroundEffect('#ffffff', 400, 0.6, 2500);
  			scene.showEffect('rock3', {
-@@ -34855,7 +34855,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -34893,7 +34893,7 @@ export const BattleMoveAnims: AnimTable = {
  			}
  			const defender = defenders[1] || defenders[0];
  			scene.backgroundEffect('#000000', 300, 0.9);
@@ -250,7 +319,7 @@ index a54122b0..8e55430a 100644
  			scene.backgroundEffect('linear-gradient(#FB5C1E 20%, #3F1D0F', 2000, 0.6, 300);
  			scene.backgroundEffect('#FFFFFF', 1000, 0.9, 2200);
  			scene.showEffect('shine', {
-@@ -35527,8 +35527,8 @@ export const BattleMoveAnims: AnimTable = {
+@@ -35565,8 +35565,8 @@ export const BattleMoveAnims: AnimTable = {
  			let ystep = (defender.x - 200 - attacker.x) / 5;
  			let zstep = (defender.z - attacker.z) / 5;
  
@@ -262,7 +331,7 @@ index a54122b0..8e55430a 100644
  
  			scene.showEffect('flareball', {
 diff --git a/play.pokemonshowdown.com/src/battle-dex.ts b/play.pokemonshowdown.com/src/battle-dex.ts
-index 33065186..5c01a8cc 100644
+index 1ddb5a25..6038c777 100644
 --- a/play.pokemonshowdown.com/src/battle-dex.ts
 +++ b/play.pokemonshowdown.com/src/battle-dex.ts
 @@ -179,16 +179,9 @@ const Dex = new class implements ModdedDex {
@@ -286,7 +355,7 @@ index 33065186..5c01a8cc 100644
  	loadedSpriteData = {xy: 1, bw: 0};
  	moddedDexes: {[mod: string]: ModdedDex} = {};
 diff --git a/play.pokemonshowdown.com/src/battle-sound.ts b/play.pokemonshowdown.com/src/battle-sound.ts
-index 5307e73f..1d9ec5f0 100644
+index 5307e73f..70b4b55b 100644
 --- a/play.pokemonshowdown.com/src/battle-sound.ts
 +++ b/play.pokemonshowdown.com/src/battle-sound.ts
 @@ -115,7 +115,7 @@ export const BattleSound = new class {
@@ -298,6 +367,26 @@ index 5307e73f..1d9ec5f0 100644
  			sound.volume = this.effectVolume / 100;
  			this.soundCache[url] = sound;
  			return sound;
+diff --git a/play.pokemonshowdown.com/style/battle.css b/play.pokemonshowdown.com/style/battle.css
+index 2b82caae..d92e683c 100644
+--- a/play.pokemonshowdown.com/style/battle.css
++++ b/play.pokemonshowdown.com/style/battle.css
+@@ -630,6 +630,7 @@ License: GPLv2
+ }
+ .leftchooser {
+ 	float: left;
++	margin: 5px 0 0 10px;
+ }
+ .chooser em {
+ 	float: left;
+@@ -638,6 +639,7 @@ License: GPLv2
+ 	border-right: 1px solid #CCCCCC;
+ 	background: #EEEEEE;
+ 	font-weight: normal;
++	color: #000000;
+ }
+ .chooser div {
+ 	float: left;
 diff --git a/play.pokemonshowdown.com/testclient.html b/play.pokemonshowdown.com/testclient.html
 index 17d828fd..9d8cb60b 100644
 --- a/play.pokemonshowdown.com/testclient.html
