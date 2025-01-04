@@ -1,17 +1,18 @@
-From 6492ce5f24b4dd6c9a3ecbfbf0f1e6d8ca8ea743 Mon Sep 17 00:00:00 2001
+From 4889c6fed448f0b5e23129a2120ab642dc2eae0a Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Sat, 4 Jan 2025 10:59:54 +0800
+Date: Sat, 4 Jan 2025 14:12:52 +0800
 Subject: [PATCH] Patch
 
 ---
  build-tools/update                            |  4 +-
  play.pokemonshowdown.com/js/client-battle.js  | 49 +++++++++++++++++
  .../src/battle-animations-moves.ts            | 52 +++++++++----------
+ .../src/battle-animations.ts                  |  1 +
  play.pokemonshowdown.com/src/battle-dex.ts    | 13 ++---
  play.pokemonshowdown.com/src/battle-sound.ts  |  2 +-
  play.pokemonshowdown.com/style/battle.css     |  2 +
  play.pokemonshowdown.com/testclient.html      |  3 +-
- 7 files changed, 85 insertions(+), 40 deletions(-)
+ 8 files changed, 86 insertions(+), 40 deletions(-)
 
 diff --git a/build-tools/update b/build-tools/update
 index 23d52a89..c79a882a 100755
@@ -330,6 +331,18 @@ index 6f02d170..cd102b8e 100644
  			scene.backgroundEffect('#FFFFFF', 1500, 1, 2500);
  
  			scene.showEffect('flareball', {
+diff --git a/play.pokemonshowdown.com/src/battle-animations.ts b/play.pokemonshowdown.com/src/battle-animations.ts
+index d1633213..52d60e9f 100644
+--- a/play.pokemonshowdown.com/src/battle-animations.ts
++++ b/play.pokemonshowdown.com/src/battle-animations.ts
+@@ -199,6 +199,7 @@ export class BattleScene implements BattleSceneStub {
+ 
+ 		this.log.battleParser!.perspective = this.battle.mySide.sideid;
+ 
++		this.resetSideConditions();
+ 		this.resetSides(true);
+ 	}
+ 
 diff --git a/play.pokemonshowdown.com/src/battle-dex.ts b/play.pokemonshowdown.com/src/battle-dex.ts
 index 1ddb5a25..6038c777 100644
 --- a/play.pokemonshowdown.com/src/battle-dex.ts
