@@ -1,13 +1,15 @@
-From 07b338c871455f69799a1b51ca0917d9cd1ced07 Mon Sep 17 00:00:00 2001
+From b3cdb249a8270f8ac5fb50404833b6ee4347d519 Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Fri, 10 Oct 2025 13:49:54 +0800
+Date: Sat, 11 Oct 2025 00:10:36 +0800
 Subject: [PATCH] Patch
 
 ---
  config/formats.ts             | 30 ++++++++++++++++++++++++++++++
  server/room-battle.ts         |  4 ++--
+ sim/battle.ts                 |  8 +-------
+ sim/side.ts                   |  5 ++---
  sim/tools/random-player-ai.ts | 20 ++++++++++++++------
- 3 files changed, 46 insertions(+), 8 deletions(-)
+ 5 files changed, 49 insertions(+), 18 deletions(-)
 
 diff --git a/config/formats.ts b/config/formats.ts
 index 5c0c10bd7..b0037c13d 100644
@@ -73,6 +75,63 @@ index c73cb1f1b..00d05a67f 100644
  
  const DISCONNECTION_TIME = 60;
  const DISCONNECTION_BANK_TIME = 300;
+diff --git a/sim/battle.ts b/sim/battle.ts
+index 8b787b026..90f058269 100644
+--- a/sim/battle.ts
++++ b/sim/battle.ts
+@@ -145,7 +145,6 @@ export class Battle {
+ 	readonly messageLog: string[];
+ 	sentLogPos: number;
+ 	sentEnd: boolean;
+-	sentRequests = true;
+ 
+ 	requestState: RequestState;
+ 	turn: number;
+@@ -1352,9 +1351,8 @@ export class Battle {
+ 
+ 		const requests = this.getRequests(type);
+ 		for (let i = 0; i < this.sides.length; i++) {
+-			this.sides[i].activeRequest = requests[i];
++			this.sides[i].emitRequest(requests[i]);
+ 		}
+-		this.sentRequests = false;
+ 
+ 		if (this.sides.every(side => side.isChoiceDone())) {
+ 			throw new Error(`Choices are done immediately after a request`);
+@@ -3266,10 +3264,6 @@ export class Battle {
+ 	sendUpdates() {
+ 		if (this.sentLogPos >= this.log.length) return;
+ 		this.send('update', this.log.slice(this.sentLogPos));
+-		if (!this.sentRequests) {
+-			for (const side of this.sides) side.emitRequest();
+-			this.sentRequests = true;
+-		}
+ 		this.sentLogPos = this.log.length;
+ 
+ 		if (!this.sentEnd && this.ended) {
+diff --git a/sim/side.ts b/sim/side.ts
+index aec2576b0..a43dabd46 100644
+--- a/sim/side.ts
++++ b/sim/side.ts
+@@ -485,8 +485,7 @@ export class Side {
+ 		this.battle.send('sideupdate', `${this.id}\n${sideUpdate}`);
+ 	}
+ 
+-	emitRequest(update: ChoiceRequest = this.activeRequest!, updatedRequest = false) {
+-		if (updatedRequest) (this.activeRequest as MoveRequest | SwitchRequest).update = true;
++	emitRequest(update: ChoiceRequest) {
+ 		this.battle.send('sideupdate', `${this.id}\n|request|${JSON.stringify(update)}`);
+ 		this.activeRequest = update;
+ 	}
+@@ -498,7 +497,7 @@ export class Side {
+ 		const updated = update ? this.updateRequestForPokemon(update.pokemon, update.update) : null;
+ 		const type = `[${updated ? 'Unavailable' : 'Invalid'} choice]`;
+ 		this.battle.send('sideupdate', `${this.id}\n|error|${type} ${message}`);
+-		if (updated) this.emitRequest(this.activeRequest!, true);
++		if (updated) this.emitRequest(this.activeRequest!);
+ 		if (this.battle.strictChoices) throw new Error(`${type} ${message}`);
+ 		return false;
+ 	}
 diff --git a/sim/tools/random-player-ai.ts b/sim/tools/random-player-ai.ts
 index 6867cadc1..b0900168c 100644
 --- a/sim/tools/random-player-ai.ts
@@ -155,5 +214,5 @@ index 6867cadc1..b0900168c 100644
  
  	protected chooseMove(active: AnyObject, moves: { choice: string, move: AnyObject }[]): string {
 -- 
-2.51.0.windows.2
+2.45.1.windows.1
 

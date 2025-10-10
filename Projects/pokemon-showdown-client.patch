@@ -1,10 +1,11 @@
-From 088be3f84e6abd520beb2a235d3d060f32da0bed Mon Sep 17 00:00:00 2001
+From 987c3d722dd8bb638036df90bf2cf47e706b717c Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Fri, 10 Oct 2025 19:52:35 +0800
+Date: Sat, 11 Oct 2025 00:14:39 +0800
 Subject: [PATCH] Patch
 
 ---
  build-tools/update                            |  4 +-
+ package.json                                  |  1 +
  play.pokemonshowdown.com/js/client-battle.js  | 49 +++++++++++++++++
  .../src/battle-animations-moves.ts            | 54 +++++++++----------
  .../src/battle-animations.ts                  |  1 +
@@ -12,7 +13,7 @@ Subject: [PATCH] Patch
  play.pokemonshowdown.com/src/battle-sound.ts  |  2 +-
  play.pokemonshowdown.com/style/battle.css     |  2 +
  play.pokemonshowdown.com/testclient.html      |  3 +-
- 8 files changed, 87 insertions(+), 41 deletions(-)
+ 9 files changed, 88 insertions(+), 41 deletions(-)
 
 diff --git a/build-tools/update b/build-tools/update
 index 18733bcd..a0df12df 100755
@@ -36,6 +37,18 @@ index 18733bcd..a0df12df 100755
  	}
  }
  
+diff --git a/package.json b/package.json
+index 125655fb..14f95d99 100644
+--- a/package.json
++++ b/package.json
+@@ -23,6 +23,7 @@
+     "@babel/preset-typescript": "^7.27.0",
+     "babel-plugin-remove-import-export": "^1.1.1",
+     "google-auth-library": "^3.1.2",
++    "http-server": "^14.1.1",
+     "image-size": "^0.7.5"
+   },
+   "devDependencies": {
 diff --git a/play.pokemonshowdown.com/js/client-battle.js b/play.pokemonshowdown.com/js/client-battle.js
 index c20b220d..70efb8e3 100644
 --- a/play.pokemonshowdown.com/js/client-battle.js
@@ -427,5 +440,5 @@ index e17d44c0..3539a30b 100644
  		<script src="data/pokedex.js" onerror="loadRemoteData(this.src)"></script>
  		<script src="data/moves.js" onerror="loadRemoteData(this.src)"></script>
 -- 
-2.51.0.windows.2
+2.45.1.windows.1
 
