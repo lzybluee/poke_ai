@@ -1,40 +1,43 @@
-From 4889c6fed448f0b5e23129a2120ab642dc2eae0a Mon Sep 17 00:00:00 2001
+From 088be3f84e6abd520beb2a235d3d060f32da0bed Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Sat, 4 Jan 2025 14:12:52 +0800
+Date: Fri, 10 Oct 2025 19:52:35 +0800
 Subject: [PATCH] Patch
 
 ---
  build-tools/update                            |  4 +-
  play.pokemonshowdown.com/js/client-battle.js  | 49 +++++++++++++++++
- .../src/battle-animations-moves.ts            | 52 +++++++++----------
+ .../src/battle-animations-moves.ts            | 54 +++++++++----------
  .../src/battle-animations.ts                  |  1 +
  play.pokemonshowdown.com/src/battle-dex.ts    | 13 ++---
  play.pokemonshowdown.com/src/battle-sound.ts  |  2 +-
  play.pokemonshowdown.com/style/battle.css     |  2 +
  play.pokemonshowdown.com/testclient.html      |  3 +-
- 8 files changed, 86 insertions(+), 40 deletions(-)
+ 8 files changed, 87 insertions(+), 41 deletions(-)
 
 diff --git a/build-tools/update b/build-tools/update
-index 23d52a89..c79a882a 100755
+index 18733bcd..a0df12df 100755
 --- a/build-tools/update
 +++ b/build-tools/update
-@@ -186,12 +186,12 @@ let news = '[failed to retrieve news]';
- try {
- 	stdout = child_process.execSync('php ' + path.resolve(thisDir, 'news-embed.php'));
+@@ -203,7 +203,7 @@ try {
+ 		stdio: 'pipe',
+ 	});
  } catch (e) {
 -	console.log("git hook failed to retrieve news (exec command failed):\n" + (e.error + e.stderr + e.stdout));
-+	// console.log("git hook failed to retrieve news (exec command failed):\n" + (e.error + e.stderr + e.stdout));
++	//console.log("git hook failed to retrieve news (exec command failed):\n" + (e.error + e.stderr + e.stdout));
  }
  try {
  	if (stdout) [newsid, news] = JSON.parse(stdout);
- } catch (e) {
--	console.log("git hook failed to retrieve news (parsing JSON failed):\n" + e.stack);
-+	// console.log("git hook failed to retrieve news (parsing JSON failed):\n" + e.stack);
+@@ -211,7 +211,7 @@ try {
+ 	if (stdout.includes("config/news.inc.php): Failed to open stream: No such file or directory")) {
+ 		console.log("news.inc.php unavailable");
+ 	} else {
+-		console.log("git hook failed to retrieve news (parsing JSON failed):\n\n" + e.message + '\n\n' + stdout);
++		//console.log("git hook failed to retrieve news (parsing JSON failed):\n\n" + e.message + '\n\n' + stdout);
+ 	}
  }
  
- indexContents = indexContents.replace(/<!-- newsid -->/g, newsid);
 diff --git a/play.pokemonshowdown.com/js/client-battle.js b/play.pokemonshowdown.com/js/client-battle.js
-index 6e2f220f..69ffcc74 100644
+index c20b220d..70efb8e3 100644
 --- a/play.pokemonshowdown.com/js/client-battle.js
 +++ b/play.pokemonshowdown.com/js/client-battle.js
 @@ -10,6 +10,7 @@
@@ -45,7 +48,7 @@ index 6e2f220f..69ffcc74 100644
  
  			this.battlePaused = false;
  			this.autoTimerActivated = false;
-@@ -265,6 +266,54 @@
+@@ -266,6 +267,54 @@
  			var switchViewpointButton = '<p><button class="button" name="switchViewpoint"><i class="fa fa-random"></i> Switch viewpoint</button></p>';
  			this.controlsShown = false;
  
@@ -101,10 +104,10 @@ index 6e2f220f..69ffcc74 100644
  
  				// battle is seeking
 diff --git a/play.pokemonshowdown.com/src/battle-animations-moves.ts b/play.pokemonshowdown.com/src/battle-animations-moves.ts
-index 6f02d170..cd102b8e 100644
+index cdae57c2..59b02888 100644
 --- a/play.pokemonshowdown.com/src/battle-animations-moves.ts
 +++ b/play.pokemonshowdown.com/src/battle-animations-moves.ts
-@@ -711,7 +711,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -712,7 +712,7 @@ export const BattleMoveAnims: AnimTable = {
  					time: 1550,
  				}, 'decel');
  			}
@@ -113,7 +116,7 @@ index 6f02d170..cd102b8e 100644
  		},
  	},
  	sandstorm: {
-@@ -1533,7 +1533,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -1534,7 +1534,7 @@ export const BattleMoveAnims: AnimTable = {
  	orderup: {
  		anim(scene, [attacker, defender]) {
  			const tatsugiriSprite = {
@@ -122,7 +125,7 @@ index 6f02d170..cd102b8e 100644
  				w: 96,
  				h: 96,
  			};
-@@ -3610,7 +3610,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -3611,7 +3611,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	morningsun: {
  		anim(scene, [attacker, defender]) {
@@ -131,7 +134,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('wisp', {
  				x: attacker.x + 40,
  				y: attacker.y - 40,
-@@ -3663,7 +3663,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -3664,7 +3664,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	moonlight: {
  		anim(scene, [attacker]) {
@@ -140,7 +143,16 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('moon', {
  				x: attacker.x,
  				y: attacker.y + 150,
-@@ -3746,7 +3746,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -3748,7 +3748,7 @@ export const BattleMoveAnims: AnimTable = {
+ 	lunarblessing: {
+ 		anim(scene, [attacker, ...defenders]) {
+ 			for (const defender of defenders) {
+-				scene.backgroundEffect(`url('https://${Config.routes.client}/fx/bg-space.jpg')`, 900, 0.6);
++				scene.backgroundEffect(`url('http://${window.location.host}/play.pokemonshowdown.com/fx/bg-space.jpg')`, 900, 0.6);
+ 				scene.showEffect('moon', {
+ 					x: attacker.x,
+ 					y: attacker.y + 150,
+@@ -3872,7 +3872,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	cosmicpower: {
  		anim(scene, [attacker]) {
@@ -149,7 +161,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('wisp', {
  				x: attacker.x + 40,
  				y: attacker.y - 40,
-@@ -5586,7 +5586,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -5755,7 +5755,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	seismictoss: {
  		anim(scene, [attacker, defender]) {
@@ -158,7 +170,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('wisp', {
  				x: defender.x,
  				y: defender.y + 10,
-@@ -8418,7 +8418,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -8587,7 +8587,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	meteormash: {
  		anim(scene, [attacker, defender]) {
@@ -167,7 +179,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect(attacker.sp, {
  				x: attacker.leftof(20),
  				y: attacker.y,
-@@ -18832,7 +18832,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -19199,7 +19199,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	psystrike: {
  		anim(scene, [attacker, defender]) {
@@ -176,7 +188,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('poisonwisp', {
  				x: defender.x - 100,
  				y: defender.y,
-@@ -19694,7 +19694,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -20061,7 +20061,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	moonblast: {
  		anim(scene, [attacker, defender]) {
@@ -185,7 +197,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('moon', {
  				x: attacker.x,
  				y: attacker.y,
-@@ -19999,7 +19999,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -20366,7 +20366,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	wish: {
  		anim(scene, [attacker]) {
@@ -194,7 +206,7 @@ index 6f02d170..cd102b8e 100644
  
  			scene.showEffect('wisp', {
  				x: attacker.x,
-@@ -20013,7 +20013,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -20380,7 +20380,7 @@ export const BattleMoveAnims: AnimTable = {
  			}, 'accel');
  		},
  		residualAnim(scene, [attacker]) {
@@ -203,7 +215,7 @@ index 6f02d170..cd102b8e 100644
  
  			scene.showEffect('wisp', {
  				x: attacker.x,
-@@ -21262,7 +21262,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -21629,7 +21629,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	dracometeor: {
  		anim(scene, [attacker, defender]) {
@@ -212,7 +224,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('flareball', {
  				x: defender.leftof(-200),
  				y: defender.y + 175,
-@@ -22767,7 +22767,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -23143,7 +23143,7 @@ export const BattleMoveAnims: AnimTable = {
  			let ystep = (defender.x - 200 - attacker.x) / 5;
  			let zstep = (defender.z - attacker.z) / 5;
  
@@ -221,7 +233,7 @@ index 6f02d170..cd102b8e 100644
  
  			for (let i = 0; i < 5; i++) {
  				scene.showEffect('energyball', {
-@@ -23126,7 +23126,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -23502,7 +23502,7 @@ export const BattleMoveAnims: AnimTable = {
  			let ystep = 20;
  			let zstep = 0;
  
@@ -230,7 +242,7 @@ index 6f02d170..cd102b8e 100644
  
  			scene.showEffect('sword', {
  				x: attacker.leftof(10),
-@@ -23411,7 +23411,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -23787,7 +23787,7 @@ export const BattleMoveAnims: AnimTable = {
  			let ystep = (defender.x - 200 - attacker.x) / 5;
  			let zstep = (defender.z - attacker.z) / 5;
  
@@ -239,7 +251,7 @@ index 6f02d170..cd102b8e 100644
  
  			for (let i = 0; i < 5; i++) {
  				scene.showEffect('mudwisp', {
-@@ -23611,7 +23611,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -23987,7 +23987,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	sheercold: { // Reminder: Improve this later
  		anim(scene, [attacker, defender]) {
@@ -248,7 +260,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('icicle', {
  				x: defender.x,
  				y: defender.y,
-@@ -23629,7 +23629,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -24005,7 +24005,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	glaciallance: {
  		anim(scene, [attacker, ...defenders]) {
@@ -257,7 +269,7 @@ index 6f02d170..cd102b8e 100644
  			for (const defender of defenders) {
  				scene.showEffect('icicle', {
  					x: defender.x,
-@@ -25944,7 +25944,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -26320,7 +26320,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	dragonascent: {
  		anim(scene, [attacker, defender]) {
@@ -266,7 +278,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('iceball', {
  				x: attacker.leftof(-25),
  				y: attacker.y + 250,
-@@ -29435,7 +29435,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -29811,7 +29811,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	plasmafists: {
  		anim(scene, [attacker, defender]) {
@@ -275,7 +287,7 @@ index 6f02d170..cd102b8e 100644
  			scene.backgroundEffect('#000000', 1000, 0.6);
  			scene.backgroundEffect('#FFFFFF', 300, 0.6, 1000);
  			scene.showEffect('electroball', {
-@@ -29678,7 +29678,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -30054,7 +30054,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	collisioncourse: {
  		anim(scene, [attacker, defender]) {
@@ -284,7 +296,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect(attacker.sp, {
  				x: attacker.x,
  				y: attacker.y,
-@@ -29824,7 +29824,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -30200,7 +30200,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	electrodrift: {
  		anim(scene, [attacker, defender]) {
@@ -293,7 +305,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect(attacker.sp, {
  				x: attacker.x,
  				y: attacker.y,
-@@ -33847,7 +33847,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -34223,7 +34223,7 @@ export const BattleMoveAnims: AnimTable = {
  	oceanicoperetta: {
  		anim(scene, [attacker, defender]) {
  			scene.backgroundEffect('linear-gradient(#000000 20%, #0000DD)', 2700, 0.4);
@@ -302,7 +314,7 @@ index 6f02d170..cd102b8e 100644
  			scene.showEffect('iceball', {
  				x: attacker.x,
  				y: attacker.y + 120,
-@@ -34170,7 +34170,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -34546,7 +34546,7 @@ export const BattleMoveAnims: AnimTable = {
  	},
  	splinteredstormshards: {
  		anim(scene, [attacker, defender]) {
@@ -311,7 +323,7 @@ index 6f02d170..cd102b8e 100644
  			scene.backgroundEffect('linear-gradient(#FFC720 15%, #421800)', 2700, 0.7);
  			scene.backgroundEffect('#ffffff', 400, 0.6, 2500);
  			scene.showEffect('rock3', {
-@@ -34893,7 +34893,7 @@ export const BattleMoveAnims: AnimTable = {
+@@ -35269,7 +35269,7 @@ export const BattleMoveAnims: AnimTable = {
  			}
  			const defender = defenders[1] || defenders[0];
  			scene.backgroundEffect('#000000', 300, 0.9);
@@ -320,7 +332,7 @@ index 6f02d170..cd102b8e 100644
  			scene.backgroundEffect('linear-gradient(#FB5C1E 20%, #3F1D0F', 2000, 0.6, 300);
  			scene.backgroundEffect('#FFFFFF', 1000, 0.9, 2200);
  			scene.showEffect('shine', {
-@@ -35565,8 +35565,8 @@ export const BattleMoveAnims: AnimTable = {
+@@ -35941,8 +35941,8 @@ export const BattleMoveAnims: AnimTable = {
  			let ystep = (defender.x - 200 - attacker.x) / 5;
  			let zstep = (defender.z - attacker.z) / 5;
  
@@ -332,10 +344,10 @@ index 6f02d170..cd102b8e 100644
  
  			scene.showEffect('flareball', {
 diff --git a/play.pokemonshowdown.com/src/battle-animations.ts b/play.pokemonshowdown.com/src/battle-animations.ts
-index d1633213..52d60e9f 100644
+index bf0f29c7..31e39fb0 100644
 --- a/play.pokemonshowdown.com/src/battle-animations.ts
 +++ b/play.pokemonshowdown.com/src/battle-animations.ts
-@@ -199,6 +199,7 @@ export class BattleScene implements BattleSceneStub {
+@@ -204,6 +204,7 @@ export class BattleScene implements BattleSceneStub {
  
  		this.log.battleParser!.perspective = this.battle.mySide.sideid;
  
@@ -344,10 +356,10 @@ index d1633213..52d60e9f 100644
  	}
  
 diff --git a/play.pokemonshowdown.com/src/battle-dex.ts b/play.pokemonshowdown.com/src/battle-dex.ts
-index 1ddb5a25..6038c777 100644
+index 03910cf4..765fb579 100644
 --- a/play.pokemonshowdown.com/src/battle-dex.ts
 +++ b/play.pokemonshowdown.com/src/battle-dex.ts
-@@ -179,16 +179,9 @@ const Dex = new class implements ModdedDex {
+@@ -229,16 +229,9 @@ export const Dex = new class implements ModdedDex {
  
  	pokeballs: string[] | null = null;
  
@@ -365,26 +377,26 @@ index 1ddb5a25..6038c777 100644
 +
 +	fxPrefix = `http://${window.location.host}/play.pokemonshowdown.com/fx/`;
  
- 	loadedSpriteData = {xy: 1, bw: 0};
- 	moddedDexes: {[mod: string]: ModdedDex} = {};
+ 	loadedSpriteData = { xy: 1, bw: 0 };
+ 	moddedDexes: { [mod: string]: ModdedDex } = {};
 diff --git a/play.pokemonshowdown.com/src/battle-sound.ts b/play.pokemonshowdown.com/src/battle-sound.ts
-index 5307e73f..70b4b55b 100644
+index f7104379..cbd85c08 100644
 --- a/play.pokemonshowdown.com/src/battle-sound.ts
 +++ b/play.pokemonshowdown.com/src/battle-sound.ts
-@@ -115,7 +115,7 @@ export const BattleSound = new class {
+@@ -116,7 +116,7 @@ export const BattleSound = new class {
  		if (this.soundCache[url]) return this.soundCache[url];
  		try {
  			const sound = document.createElement('audio');
--			sound.src = 'https://' + Config.routes.client + '/' + url;
+-			sound.src = `https://${Config.routes.client}/${url}`;
 +			sound.src = `http://${window.location.host}/play.pokemonshowdown.com/` + url;
  			sound.volume = this.effectVolume / 100;
  			this.soundCache[url] = sound;
  			return sound;
 diff --git a/play.pokemonshowdown.com/style/battle.css b/play.pokemonshowdown.com/style/battle.css
-index 2b82caae..d92e683c 100644
+index bf8bed31..2eac7e49 100644
 --- a/play.pokemonshowdown.com/style/battle.css
 +++ b/play.pokemonshowdown.com/style/battle.css
-@@ -630,6 +630,7 @@ License: GPLv2
+@@ -628,6 +628,7 @@ License: GPLv2
  }
  .leftchooser {
  	float: left;
@@ -392,7 +404,7 @@ index 2b82caae..d92e683c 100644
  }
  .chooser em {
  	float: left;
-@@ -638,6 +639,7 @@ License: GPLv2
+@@ -636,6 +637,7 @@ License: GPLv2
  	border-right: 1px solid #CCCCCC;
  	background: #EEEEEE;
  	font-weight: normal;
@@ -401,7 +413,7 @@ index 2b82caae..d92e683c 100644
  .chooser div {
  	float: left;
 diff --git a/play.pokemonshowdown.com/testclient.html b/play.pokemonshowdown.com/testclient.html
-index 17d828fd..9d8cb60b 100644
+index e17d44c0..3539a30b 100644
 --- a/play.pokemonshowdown.com/testclient.html
 +++ b/play.pokemonshowdown.com/testclient.html
 @@ -110,7 +110,8 @@
@@ -415,5 +427,5 @@ index 17d828fd..9d8cb60b 100644
  		<script src="data/pokedex.js" onerror="loadRemoteData(this.src)"></script>
  		<script src="data/moves.js" onerror="loadRemoteData(this.src)"></script>
 -- 
-2.45.1.windows.1
+2.51.0.windows.2
 

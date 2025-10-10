@@ -1,20 +1,20 @@
-From a3b876ba252388c7ec12b48ccdcf378caba510e6 Mon Sep 17 00:00:00 2001
-From: "lzybluee" <lzybluee@gmail.com>
-Date: Wed, 25 Sep 2024 10:52:04 +0800
+From 07b338c871455f69799a1b51ca0917d9cd1ced07 Mon Sep 17 00:00:00 2001
+From: lzybluee <lzybluee@gmail.com>
+Date: Fri, 10 Oct 2025 13:49:54 +0800
 Subject: [PATCH] Patch
 
 ---
- config/formats.ts             | 35 +++++++++++++++++++++++++++++++++++
+ config/formats.ts             | 30 ++++++++++++++++++++++++++++++
  server/room-battle.ts         |  4 ++--
- sim/tools/random-player-ai.ts | 22 ++++++++++++++--------
- 3 files changed, 51 insertions(+), 10 deletions(-)
+ sim/tools/random-player-ai.ts | 20 ++++++++++++++------
+ 3 files changed, 46 insertions(+), 8 deletions(-)
 
 diff --git a/config/formats.ts b/config/formats.ts
-index 4260ce417..4452c1b61 100644
+index 5c0c10bd7..b0037c13d 100644
 --- a/config/formats.ts
 +++ b/config/formats.ts
-@@ -3297,6 +3297,26 @@ export const Formats: FormatList = [
- 		team: 'random',
+@@ -3561,6 +3561,26 @@ export const Formats: import('../sim/dex-formats').FormatList = [
+ 		bestOfDefault: true,
  		ruleset: ['Obtainable', 'Sleep Clause Mod', 'HP Percentage Mod', 'Cancel Mod', 'Illusion Level Mod'],
  	},
 +	{
@@ -40,7 +40,7 @@ index 4260ce417..4452c1b61 100644
  	{
  		name: "[Gen 7] Battle Factory",
  		desc: `Randomized teams of Pok&eacute;mon for a generated Smogon tier with sets that are competitively viable.`,
-@@ -4258,6 +4282,16 @@ export const Formats: FormatList = [
+@@ -4227,6 +4247,16 @@ export const Formats: import('../sim/dex-formats').FormatList = [
  		// no restrictions, for serious (other than team preview)
  		ruleset: ['Team Preview', 'Cancel Mod', 'Max Team Size = 24', 'Max Move Count = 24', 'Max Level = 9999', 'Default Level = 100'],
  	},
@@ -58,10 +58,10 @@ index 4260ce417..4452c1b61 100644
  	// OR/AS Singles
  	///////////////////////////////////////////////////////////////////
 diff --git a/server/room-battle.ts b/server/room-battle.ts
-index 64094cdb6..f8f15de3a 100644
+index c73cb1f1b..00d05a67f 100644
 --- a/server/room-battle.ts
 +++ b/server/room-battle.ts
-@@ -42,9 +42,9 @@ const SECONDS = 1000;
+@@ -43,9 +43,9 @@ const SECONDS = 1000;
  // Timer constants: In seconds, should be multiple of TICK_TIME
  const STARTING_TIME = 150;
  const MAX_TURN_TIME = 150;
@@ -74,10 +74,10 @@ index 64094cdb6..f8f15de3a 100644
  const DISCONNECTION_TIME = 60;
  const DISCONNECTION_BANK_TIME = 300;
 diff --git a/sim/tools/random-player-ai.ts b/sim/tools/random-player-ai.ts
-index 7c12a3daf..5b87eff07 100644
+index 6867cadc1..b0900168c 100644
 --- a/sim/tools/random-player-ai.ts
 +++ b/sim/tools/random-player-ai.ts
-@@ -14,6 +14,7 @@ export class RandomPlayerAI extends BattlePlayer {
+@@ -15,6 +15,7 @@ export class RandomPlayerAI extends BattlePlayer {
  	protected readonly move: number;
  	protected readonly mega: number;
  	protected readonly prng: PRNG;
@@ -85,14 +85,14 @@ index 7c12a3daf..5b87eff07 100644
  
  	constructor(
  		playerStream: ObjectReadWriteStream<string>,
-@@ -24,16 +25,21 @@ export class RandomPlayerAI extends BattlePlayer {
+@@ -25,16 +26,21 @@ export class RandomPlayerAI extends BattlePlayer {
  		this.move = options.move || 1.0;
  		this.mega = options.mega || 0;
- 		this.prng = options.seed && !Array.isArray(options.seed) ? options.seed : new PRNG(options.seed);
+ 		this.prng = PRNG.get(options.seed);
 +		this.lastRequest = null;
  	}
  
- 	receiveError(error: Error) {
+ 	override receiveError(error: Error) {
  		// If we made an unavailable choice we will receive a followup request to
  		// allow us the opportunity to correct our decision.
 -		if (error.message.startsWith('[Unavailable choice]')) return;
@@ -103,28 +103,21 @@ index 7c12a3daf..5b87eff07 100644
  		throw error;
  	}
  
- 	receiveRequest(request: AnyObject) {
+ 	override receiveRequest(request: ChoiceRequest) {
 +		this.lastRequest = request;
  		if (request.wait) {
  			// wait request
  			// do nothing
-@@ -72,14 +78,12 @@ export class RandomPlayerAI extends BattlePlayer {
- 			const choices = request.active.map((active: AnyObject, i: number) => {
- 				if (pokemon[i].condition.endsWith(` fnt`) || pokemon[i].commanding) return `pass`;
- 
--				canMegaEvo = canMegaEvo && active.canMegaEvo;
- 				canUltraBurst = canUltraBurst && active.canUltraBurst;
--				canZMove = canZMove && !!active.canZMove;
- 				canDynamax = canDynamax && !!active.canDynamax;
+@@ -82,7 +88,7 @@ export class RandomPlayerAI extends BattlePlayer {
  				canTerastallize = canTerastallize && !!active.canTerastallize;
  
  				// Determine whether we should change form if we do end up switching
--				const change = (canMegaEvo || canUltraBurst || canDynamax) && this.prng.next() < this.mega;
-+				const change = ((canMegaEvo && active.canMegaEvo) || canUltraBurst || canDynamax) && this.prng.next() < this.mega;
+-				const change = (canMegaEvo || canUltraBurst || canDynamax) && this.prng.random() < this.mega;
++				const change = ((canMegaEvo && active.canMegaEvo) || canUltraBurst || canDynamax) && this.prng.random() < this.mega;
  				// If we've already dynamaxed or if we're planning on potentially dynamaxing
  				// we need to use the maxMoves instead of our regular moves
  
-@@ -98,7 +102,7 @@ export class RandomPlayerAI extends BattlePlayer {
+@@ -101,7 +107,7 @@ export class RandomPlayerAI extends BattlePlayer {
  					target: possibleMoves[j - 1].target,
  					zMove: false,
  				}));
@@ -133,24 +126,24 @@ index 7c12a3daf..5b87eff07 100644
  					canMove.push(...range(1, active.canZMove.length)
  						.filter(j => active.canZMove[j - 1])
  						.map(j => ({
-@@ -120,14 +124,14 @@ export class RandomPlayerAI extends BattlePlayer {
+@@ -123,14 +129,14 @@ export class RandomPlayerAI extends BattlePlayer {
  					// NOTE: We don't generate all possible targeting combinations.
  					if (request.active.length > 1) {
  						if ([`normal`, `any`, `adjacentFoe`].includes(m.target)) {
--							move += ` ${1 + Math.floor(this.prng.next() * 2)}`;
-+							move += ` ${1 + Math.floor(this.prng.next() * request.active.length)}`;
+-							move += ` ${1 + this.prng.random(2)}`;
++							move += ` ${1 + this.prng.random(request.active.length)}`;
  						}
  						if (m.target === `adjacentAlly`) {
  							move += ` -${(i ^ 1) + 1}`;
  						}
  						if (m.target === `adjacentAllyOrSelf`) {
  							if (hasAlly) {
--								move += ` -${1 + Math.floor(this.prng.next() * 2)}`;
-+								move += ` -${1 + Math.floor(this.prng.next() * request.active.length)}`;
+-								move += ` -${1 + this.prng.random(2)}`;
++								move += ` -${1 + this.prng.random(request.active.length)}`;
  							} else {
  								move += ` -${i + 1}`;
  							}
-@@ -191,7 +195,9 @@ export class RandomPlayerAI extends BattlePlayer {
+@@ -191,7 +197,9 @@ export class RandomPlayerAI extends BattlePlayer {
  	}
  
  	protected chooseTeamPreview(team: AnyObject[]): string {
@@ -160,7 +153,7 @@ index 7c12a3daf..5b87eff07 100644
 +		return 'team ' + order.join('');
  	}
  
- 	protected chooseMove(active: AnyObject, moves: {choice: string, move: AnyObject}[]): string {
+ 	protected chooseMove(active: AnyObject, moves: { choice: string, move: AnyObject }[]): string {
 -- 
-2.46.2.windows.1
+2.51.0.windows.2
 
