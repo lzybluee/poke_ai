@@ -229,16 +229,9 @@ statNamesExceptHP=['atk','def','spa','spd','spe'];this.
 
 pokeballs=null;this.
 
-resourcePrefix=function(_window$document){
-var prefix='';
-if(((_window$document=window.document)==null||(_window$document=_window$document.location)==null?void 0:_window$document.protocol)!=='http:')prefix='https:';
-return prefix+"//"+(window.Config?Config.routes.client:'play.pokemonshowdown.com')+"/";
-}();this.
+resourcePrefix="http://"+window.location.host+"/play.pokemonshowdown.com/";this.
 
-fxPrefix=function(_window$document2){
-var protocol=((_window$document2=window.document)==null||(_window$document2=_window$document2.location)==null?void 0:_window$document2.protocol)!=='http:'?'https:':'';
-return protocol+"//"+(window.Config?Config.routes.client:'play.pokemonshowdown.com')+"/fx/";
-}();this.
+fxPrefix="http://"+window.location.host+"/play.pokemonshowdown.com/fx/";this.
 
 loadedSpriteData={xy:1,bw:0};this.
 moddedDexes={};this.
