@@ -34,7 +34,7 @@ folders = [
 
 suffix = ['.webm', '.png', '.mp4', '.gif', '.wav', '.jpg', '.mp3']
 
-LOCAL_FOLDER = r'E:\Poke\assets'
+LOCAL_FOLDER = 'client-assets'
 
 
 def download_asset(url, path):
