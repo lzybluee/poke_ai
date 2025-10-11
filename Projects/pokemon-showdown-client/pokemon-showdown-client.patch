@@ -1,6 +1,6 @@
-From bc805626ed80e9973246b28adfa46ce4fd4b7ebb Mon Sep 17 00:00:00 2001
+From 94fb5e6b759f3e5d391210dada230a6c9360396b Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Sat, 11 Oct 2025 10:21:15 +0800
+Date: Sat, 11 Oct 2025 13:13:21 +0800
 Subject: [PATCH] Patch
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] Patch
  package.json                                  |  1 +
  play.pokemonshowdown.com/js/client-battle.js  | 49 +++++++++++++++++
  .../src/battle-animations-moves.ts            | 54 +++++++++----------
- .../src/battle-animations.ts                  |  7 +--
+ .../src/battle-animations.ts                  |  6 +--
  play.pokemonshowdown.com/src/battle-dex.ts    | 13 ++---
  .../src/battle-searchresults.tsx              |  6 +--
  play.pokemonshowdown.com/src/battle-sound.ts  |  2 +-
@@ -16,7 +16,7 @@ Subject: [PATCH] Patch
  play.pokemonshowdown.com/style/battle.css     |  2 +
  play.pokemonshowdown.com/testclient.html      |  3 +-
  teams.pokemonshowdown.com/src/utils.tsx       |  2 +-
- 12 files changed, 96 insertions(+), 49 deletions(-)
+ 12 files changed, 95 insertions(+), 49 deletions(-)
 
 diff --git a/build-tools/update b/build-tools/update
 index 18733bcd..a0df12df 100755
@@ -360,18 +360,10 @@ index cdae57c2..59b02888 100644
  
  			scene.showEffect('flareball', {
 diff --git a/play.pokemonshowdown.com/src/battle-animations.ts b/play.pokemonshowdown.com/src/battle-animations.ts
-index bf0f29c7..4c4b0874 100644
+index bf0f29c7..922680a2 100644
 --- a/play.pokemonshowdown.com/src/battle-animations.ts
 +++ b/play.pokemonshowdown.com/src/battle-animations.ts
-@@ -204,6 +204,7 @@ export class BattleScene implements BattleSceneStub {
- 
- 		this.log.battleParser!.perspective = this.battle.mySide.sideid;
- 
-+		this.resetSideConditions();
- 		this.resetSides(true);
- 	}
- 
-@@ -1419,7 +1420,7 @@ export class BattleScene implements BattleSceneStub {
+@@ -1419,7 +1419,7 @@ export class BattleScene implements BattleSceneStub {
  
  	typeAnim(pokemon: Pokemon, types: string) {
  		const result = BattleLog.escapeHTML(types).split('/').map(type =>
@@ -380,7 +372,7 @@ index bf0f29c7..4c4b0874 100644
  		).join(' ');
  		this.resultAnim(pokemon, result, 'neutral');
  	}
-@@ -2842,12 +2843,12 @@ export class PokemonSprite extends Sprite {
+@@ -2842,12 +2842,12 @@ export class PokemonSprite extends Sprite {
  		} else if (pokemon.volatiles.typechange && pokemon.volatiles.typechange[1]) {
  			const types = pokemon.volatiles.typechange[1].split('/');
  			for (const type of types) {
