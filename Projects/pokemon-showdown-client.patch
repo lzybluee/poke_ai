@@ -1,6 +1,6 @@
-From 987c3d722dd8bb638036df90bf2cf47e706b717c Mon Sep 17 00:00:00 2001
+From bc805626ed80e9973246b28adfa46ce4fd4b7ebb Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Sat, 11 Oct 2025 00:14:39 +0800
+Date: Sat, 11 Oct 2025 10:21:15 +0800
 Subject: [PATCH] Patch
 
 ---
@@ -8,12 +8,15 @@ Subject: [PATCH] Patch
  package.json                                  |  1 +
  play.pokemonshowdown.com/js/client-battle.js  | 49 +++++++++++++++++
  .../src/battle-animations-moves.ts            | 54 +++++++++----------
- .../src/battle-animations.ts                  |  1 +
+ .../src/battle-animations.ts                  |  7 +--
  play.pokemonshowdown.com/src/battle-dex.ts    | 13 ++---
+ .../src/battle-searchresults.tsx              |  6 +--
  play.pokemonshowdown.com/src/battle-sound.ts  |  2 +-
+ play.pokemonshowdown.com/src/panels.tsx       |  2 +-
  play.pokemonshowdown.com/style/battle.css     |  2 +
  play.pokemonshowdown.com/testclient.html      |  3 +-
- 9 files changed, 88 insertions(+), 41 deletions(-)
+ teams.pokemonshowdown.com/src/utils.tsx       |  2 +-
+ 12 files changed, 96 insertions(+), 49 deletions(-)
 
 diff --git a/build-tools/update b/build-tools/update
 index 18733bcd..a0df12df 100755
@@ -357,7 +360,7 @@ index cdae57c2..59b02888 100644
  
  			scene.showEffect('flareball', {
 diff --git a/play.pokemonshowdown.com/src/battle-animations.ts b/play.pokemonshowdown.com/src/battle-animations.ts
-index bf0f29c7..31e39fb0 100644
+index bf0f29c7..4c4b0874 100644
 --- a/play.pokemonshowdown.com/src/battle-animations.ts
 +++ b/play.pokemonshowdown.com/src/battle-animations.ts
 @@ -204,6 +204,7 @@ export class BattleScene implements BattleSceneStub {
@@ -368,8 +371,32 @@ index bf0f29c7..31e39fb0 100644
  		this.resetSides(true);
  	}
  
+@@ -1419,7 +1420,7 @@ export class BattleScene implements BattleSceneStub {
+ 
+ 	typeAnim(pokemon: Pokemon, types: string) {
+ 		const result = BattleLog.escapeHTML(types).split('/').map(type =>
+-			`<img src="${Dex.resourcePrefix}sprites/types/${encodeURIComponent(type)}.png" alt="${type}" class="pixelated" />`
++			`<img src="${Dex.resourcePrefix}sprites/types/${encodeURIComponent(type.replace(/\?/g, '-'))}.png" alt="${type}" class="pixelated" />`
+ 		).join(' ');
+ 		this.resultAnim(pokemon, result, 'neutral');
+ 	}
+@@ -2842,12 +2843,12 @@ export class PokemonSprite extends Sprite {
+ 		} else if (pokemon.volatiles.typechange && pokemon.volatiles.typechange[1]) {
+ 			const types = pokemon.volatiles.typechange[1].split('/');
+ 			for (const type of types) {
+-				status += '<img src="' + Dex.resourcePrefix + 'sprites/types/' + encodeURIComponent(type) + '.png" alt="' + type + '" class="pixelated" /> ';
++				status += '<img src="' + Dex.resourcePrefix + 'sprites/types/' + encodeURIComponent(type.replace(/\?/g, '-')) + '.png" alt="' + type + '" class="pixelated" /> ';
+ 			}
+ 		}
+ 		if (pokemon.volatiles.typeadd) {
+ 			const type = pokemon.volatiles.typeadd[1];
+-			status += '+<img src="' + Dex.resourcePrefix + 'sprites/types/' + type + '.png" alt="' + type + '" class="pixelated" /> ';
++			status += '+<img src="' + Dex.resourcePrefix + 'sprites/types/' + type.replace(/\?/g, '-') + '.png" alt="' + type + '" class="pixelated" /> ';
+ 		}
+ 		for (const stat in pokemon.boosts) {
+ 			if (pokemon.boosts[stat]) {
 diff --git a/play.pokemonshowdown.com/src/battle-dex.ts b/play.pokemonshowdown.com/src/battle-dex.ts
-index 03910cf4..765fb579 100644
+index 03910cf4..a4e9bb1e 100644
 --- a/play.pokemonshowdown.com/src/battle-dex.ts
 +++ b/play.pokemonshowdown.com/src/battle-dex.ts
 @@ -229,16 +229,9 @@ export const Dex = new class implements ModdedDex {
@@ -381,17 +408,56 @@ index 03910cf4..765fb579 100644
 -		if (window.document?.location?.protocol !== 'http:') prefix = 'https:';
 -		return `${prefix}//${window.Config ? Config.routes.client : 'play.pokemonshowdown.com'}/`;
 -	})();
--
++	resourcePrefix = `http://${window.location.host}/play.pokemonshowdown.com/`;
+ 
 -	fxPrefix = (() => {
 -		const protocol = (window.document?.location?.protocol !== 'http:') ? 'https:' : '';
 -		return `${protocol}//${window.Config ? Config.routes.client : 'play.pokemonshowdown.com'}/fx/`;
 -	})();
-+	resourcePrefix = `http://${window.location.host}/play.pokemonshowdown.com/`;
-+
 +	fxPrefix = `http://${window.location.host}/play.pokemonshowdown.com/fx/`;
  
  	loadedSpriteData = { xy: 1, bw: 0 };
  	moddedDexes: { [mod: string]: ModdedDex } = {};
+@@ -925,7 +918,7 @@ export const Dex = new class implements ModdedDex {
+ 	getTypeIcon(type: string | null, b?: boolean) { // b is just for utilichart.js
+ 		type = this.types.get(type).name;
+ 		if (!type) type = '???';
+-		let sanitizedType = type.replace(/\?/g, '%3f');
++		let sanitizedType = type.replace(/\?/g, '-');
+ 		return `<img src="${Dex.resourcePrefix}sprites/types/${sanitizedType}.png" alt="${type}" height="14" width="32" class="pixelated${b ? ' b' : ''}" />`;
+ 	}
+ 
+diff --git a/play.pokemonshowdown.com/src/battle-searchresults.tsx b/play.pokemonshowdown.com/src/battle-searchresults.tsx
+index 78f4ebc3..0114959d 100644
+--- a/play.pokemonshowdown.com/src/battle-searchresults.tsx
++++ b/play.pokemonshowdown.com/src/battle-searchresults.tsx
+@@ -100,7 +100,7 @@ export class PSSearchResults extends preact.Component<{
+ 
+ 				<span class="col typecol">
+ 					{pokemon.types.map(type =>
+-						<img src={`${Dex.resourcePrefix}sprites/types/${type}.png`} alt={type} height="14" width="32" class="pixelated" />
++						<img src={`${Dex.resourcePrefix}sprites/types/${type.replace(/\?/g, '-')}.png`} alt={type} height="14" width="32" class="pixelated" />
+ 					)}
+ 				</span>
+ 
+@@ -250,7 +250,7 @@ export class PSSearchResults extends preact.Component<{
+ 
+ 			<span class="col typecol">
+ 				<img
+-					src={`${Dex.resourcePrefix}sprites/types/${encodeURIComponent(move.type)}.png`}
++					src={`${Dex.resourcePrefix}sprites/types/${encodeURIComponent(move.type.replace(/\?/g, '-'))}.png`}
+ 					alt={move.type} height="14" width="32" class="pixelated"
+ 				/>
+ 				<img
+@@ -282,7 +282,7 @@ export class PSSearchResults extends preact.Component<{
+ 
+ 			<span class="col typecol">
+ 				<img
+-					src={`${Dex.resourcePrefix}sprites/types/${encodeURIComponent(name)}.png`}
++					src={`${Dex.resourcePrefix}sprites/types/${encodeURIComponent(name.replace(/\?/g, '-'))}.png`}
+ 					alt={name} height="14" width="32" class="pixelated"
+ 				/>
+ 			</span>
 diff --git a/play.pokemonshowdown.com/src/battle-sound.ts b/play.pokemonshowdown.com/src/battle-sound.ts
 index f7104379..cbd85c08 100644
 --- a/play.pokemonshowdown.com/src/battle-sound.ts
@@ -405,6 +471,19 @@ index f7104379..cbd85c08 100644
  			sound.volume = this.effectVolume / 100;
  			this.soundCache[url] = sound;
  			return sound;
+diff --git a/play.pokemonshowdown.com/src/panels.tsx b/play.pokemonshowdown.com/src/panels.tsx
+index 233fc3e6..2936f541 100644
+--- a/play.pokemonshowdown.com/src/panels.tsx
++++ b/play.pokemonshowdown.com/src/panels.tsx
+@@ -927,7 +927,7 @@ export function PSIcon(
+ 	if ('type' in props) {
+ 		let type = Dex.types.get(props.type).name;
+ 		if (!type) type = '???';
+-		let sanitizedType = type.replace(/\?/g, '%3f');
++		let sanitizedType = type.replace(/\?/g, '-');
+ 		return <img
+ 			src={`${Dex.resourcePrefix}sprites/types/${sanitizedType}.png`} alt={type}
+ 			height="14" width="32" class={`pixelated${props.b ? ' b' : ''}`} style="vertical-align:middle"
 diff --git a/play.pokemonshowdown.com/style/battle.css b/play.pokemonshowdown.com/style/battle.css
 index bf8bed31..2eac7e49 100644
 --- a/play.pokemonshowdown.com/style/battle.css
@@ -439,6 +518,19 @@ index e17d44c0..3539a30b 100644
  
  		<script src="data/pokedex.js" onerror="loadRemoteData(this.src)"></script>
  		<script src="data/moves.js" onerror="loadRemoteData(this.src)"></script>
+diff --git a/teams.pokemonshowdown.com/src/utils.tsx b/teams.pokemonshowdown.com/src/utils.tsx
+index 2fa5181a..752ff7b2 100644
+--- a/teams.pokemonshowdown.com/src/utils.tsx
++++ b/teams.pokemonshowdown.com/src/utils.tsx
+@@ -218,7 +218,7 @@ export class PSIcon extends preact.Component<{
+ 		} else if (this.props.type) {
+ 			let type = Dex.types.get(this.props.type).name;
+ 			if (!type) type = '???';
+-			let sanitizedType = type.replace(/\?/g, '%3f');
++			let sanitizedType = type.replace(/\?/g, '-');
+ 			return <img
+ 				src={`${Dex.resourcePrefix}sprites/types/${sanitizedType}.png`}
+ 				alt={this.props.hideAlt ? undefined : type}
 -- 
 2.45.1.windows.1
 
