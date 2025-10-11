@@ -1,6 +1,6 @@
-From 94fb5e6b759f3e5d391210dada230a6c9360396b Mon Sep 17 00:00:00 2001
+From 8ce76396bc5f68df2d16c2cb05927bcfc367124e Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Sat, 11 Oct 2025 13:13:21 +0800
+Date: Sat, 11 Oct 2025 20:42:22 +0800
 Subject: [PATCH] Patch
 
 ---
@@ -14,9 +14,11 @@ Subject: [PATCH] Patch
  play.pokemonshowdown.com/src/battle-sound.ts  |  2 +-
  play.pokemonshowdown.com/src/panels.tsx       |  2 +-
  play.pokemonshowdown.com/style/battle.css     |  2 +
+ play.pokemonshowdown.com/style/client.css     | 10 ++--
+ play.pokemonshowdown.com/style/client2.css    | 10 ++--
  play.pokemonshowdown.com/testclient.html      |  3 +-
  teams.pokemonshowdown.com/src/utils.tsx       |  2 +-
- 12 files changed, 95 insertions(+), 49 deletions(-)
+ 14 files changed, 105 insertions(+), 59 deletions(-)
 
 diff --git a/build-tools/update b/build-tools/update
 index 18733bcd..a0df12df 100755
@@ -496,6 +498,84 @@ index bf8bed31..2eac7e49 100644
  }
  .chooser div {
  	float: left;
+diff --git a/play.pokemonshowdown.com/style/client.css b/play.pokemonshowdown.com/style/client.css
+index c14d35c3..4c00d4f1 100644
+--- a/play.pokemonshowdown.com/style/client.css
++++ b/play.pokemonshowdown.com/style/client.css
+@@ -987,10 +987,10 @@ p.or:after {
+ 	position: absolute;
+ 	left: -30px;
+ 	bottom: -5px;
+-	background: url(https://play.pokemonshowdown.com/sprites/gen5/meloetta.png) center no-repeat;
++	background: url(../sprites/gen5/meloetta.png) center no-repeat;
+ }
+ .roomcounters button:hover .usercount {
+-	background: url(https://play.pokemonshowdown.com/sprites/gen5ani/meloetta.gif) center no-repeat;
++	background: url(../sprites/gen5ani/meloetta.gif) center no-repeat;
+ }
+ .roomcounters .battlecount {
+ 	display: block;
+@@ -999,10 +999,10 @@ p.or:after {
+ 	position: absolute;
+ 	right: -30px;
+ 	bottom: -10px;
+-	background: url(https://play.pokemonshowdown.com/sprites/gen5/meloetta-pirouette.png) center no-repeat;
++	background: url(../sprites/gen5/meloetta-pirouette.png) center no-repeat;
+ }
+ .roomcounters button:hover .battlecount {
+-	background: url(https://play.pokemonshowdown.com/sprites/gen5ani/meloetta-pirouette.gif) center no-repeat;
++	background: url(../sprites/gen5ani/meloetta-pirouette.gif) center no-repeat;
+ } 
+ 
+ .roomlist {
+@@ -3003,7 +3003,7 @@ p.or:after {
+ .avatarlist button {
+ 	width: 80px;
+ 	height: 80px;
+-	background: transparent url(https://play.pokemonshowdown.com/sprites/trainers-sheet.png) no-repeat scroll 0px 0px;
++	background: transparent url(../sprites/trainers-sheet.png) no-repeat scroll 0px 0px;
+ }
+ .bglist button span {
+ 	display: block;
+diff --git a/play.pokemonshowdown.com/style/client2.css b/play.pokemonshowdown.com/style/client2.css
+index 66cdc3fd..e80f009c 100644
+--- a/play.pokemonshowdown.com/style/client2.css
++++ b/play.pokemonshowdown.com/style/client2.css
+@@ -1068,10 +1068,10 @@ form.menugroup {
+ 	position: absolute;
+ 	left: -30px;
+ 	bottom: -5px;
+-	background: url(https://play.pokemonshowdown.com/sprites/gen5/meloetta.png) center no-repeat;
++	background: url(../sprites/gen5/meloetta.png) center no-repeat;
+ }
+ .roomcounters .button:hover .usercount {
+-	background: url(https://play.pokemonshowdown.com/sprites/gen5ani/meloetta.gif) center no-repeat;
++	background: url(../sprites/gen5ani/meloetta.gif) center no-repeat;
+ }
+ .roomcounters .battlecount {
+ 	display: block;
+@@ -1080,10 +1080,10 @@ form.menugroup {
+ 	position: absolute;
+ 	right: -30px;
+ 	bottom: -10px;
+-	background: url(https://play.pokemonshowdown.com/sprites/gen5/meloetta-pirouette.png) center no-repeat;
++	background: url(../sprites/gen5/meloetta-pirouette.png) center no-repeat;
+ }
+ .roomcounters .button:hover .battlecount {
+-	background: url(https://play.pokemonshowdown.com/sprites/gen5ani/meloetta-pirouette.gif) center no-repeat;
++	background: url(../sprites/gen5ani/meloetta-pirouette.gif) center no-repeat;
+ } 
+ 
+ .roomlist {
+@@ -2229,7 +2229,7 @@ pre.textbox.textbox-empty[placeholder]:before {
+ .avatarlist button {
+ 	width: 80px;
+ 	height: 80px;
+-	background: transparent url(https://play.pokemonshowdown.com/sprites/trainers-sheet.png) no-repeat scroll 0px 0px;
++	background: transparent url(../sprites/trainers-sheet.png) no-repeat scroll 0px 0px;
+ }
+ .bglist button span {
+ 	display: block;
 diff --git a/play.pokemonshowdown.com/testclient.html b/play.pokemonshowdown.com/testclient.html
 index e17d44c0..3539a30b 100644
 --- a/play.pokemonshowdown.com/testclient.html
