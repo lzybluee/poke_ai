@@ -1,6 +1,6 @@
-From b3cdb249a8270f8ac5fb50404833b6ee4347d519 Mon Sep 17 00:00:00 2001
+From 5b3a1c4859cc7021c455b17b2656e2a9fbe69db8 Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Sat, 11 Oct 2025 00:10:36 +0800
+Date: Mon, 13 Oct 2025 12:11:52 +0800
 Subject: [PATCH] Patch
 
 ---
@@ -8,8 +8,8 @@ Subject: [PATCH] Patch
  server/room-battle.ts         |  4 ++--
  sim/battle.ts                 |  8 +-------
  sim/side.ts                   |  5 ++---
- sim/tools/random-player-ai.ts | 20 ++++++++++++++------
- 5 files changed, 49 insertions(+), 18 deletions(-)
+ sim/tools/random-player-ai.ts | 24 ++++++++++++++++++------
+ 5 files changed, 53 insertions(+), 18 deletions(-)
 
 diff --git a/config/formats.ts b/config/formats.ts
 index 5c0c10bd7..b0037c13d 100644
@@ -133,7 +133,7 @@ index aec2576b0..a43dabd46 100644
  		return false;
  	}
 diff --git a/sim/tools/random-player-ai.ts b/sim/tools/random-player-ai.ts
-index 6867cadc1..b0900168c 100644
+index 6867cadc1..6acfa611c 100644
 --- a/sim/tools/random-player-ai.ts
 +++ b/sim/tools/random-player-ai.ts
 @@ -15,6 +15,7 @@ export class RandomPlayerAI extends BattlePlayer {
@@ -167,16 +167,20 @@ index 6867cadc1..b0900168c 100644
  		if (request.wait) {
  			// wait request
  			// do nothing
-@@ -82,7 +88,7 @@ export class RandomPlayerAI extends BattlePlayer {
+@@ -82,7 +88,11 @@ export class RandomPlayerAI extends BattlePlayer {
  				canTerastallize = canTerastallize && !!active.canTerastallize;
  
  				// Determine whether we should change form if we do end up switching
 -				const change = (canMegaEvo || canUltraBurst || canDynamax) && this.prng.random() < this.mega;
-+				const change = ((canMegaEvo && active.canMegaEvo) || canUltraBurst || canDynamax) && this.prng.random() < this.mega;
++				const change = ((canMegaEvo && active.canMegaEvo) ||
++								(canUltraBurst && active.canUltraBurst) ||
++								(canDynamax && !!active.canDynamax) ||
++								(canTerastallize && !!active.canTerastallize)) &&
++								this.prng.random() < this.mega;
  				// If we've already dynamaxed or if we're planning on potentially dynamaxing
  				// we need to use the maxMoves instead of our regular moves
  
-@@ -101,7 +107,7 @@ export class RandomPlayerAI extends BattlePlayer {
+@@ -101,7 +111,7 @@ export class RandomPlayerAI extends BattlePlayer {
  					target: possibleMoves[j - 1].target,
  					zMove: false,
  				}));
@@ -185,7 +189,7 @@ index 6867cadc1..b0900168c 100644
  					canMove.push(...range(1, active.canZMove.length)
  						.filter(j => active.canZMove[j - 1])
  						.map(j => ({
-@@ -123,14 +129,14 @@ export class RandomPlayerAI extends BattlePlayer {
+@@ -123,14 +133,14 @@ export class RandomPlayerAI extends BattlePlayer {
  					// NOTE: We don't generate all possible targeting combinations.
  					if (request.active.length > 1) {
  						if ([`normal`, `any`, `adjacentFoe`].includes(m.target)) {
@@ -202,7 +206,7 @@ index 6867cadc1..b0900168c 100644
  							} else {
  								move += ` -${i + 1}`;
  							}
-@@ -191,7 +197,9 @@ export class RandomPlayerAI extends BattlePlayer {
+@@ -191,7 +201,9 @@ export class RandomPlayerAI extends BattlePlayer {
  	}
  
  	protected chooseTeamPreview(team: AnyObject[]): string {

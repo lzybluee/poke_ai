@@ -209,8 +209,8 @@ rl.on('line', (line) => {
 		let show_all = player_control_ai || words[0] == 'p1';
 		let command = '/*' + line + '*/ let p = pokemon("' + line.slice(0, 2) + '", "' + line.slice(3) + '");' +
 			'let ret = "";' +
-			(show_all ? 'ret += p.getDetails().secret.replace("|", " (") + ")\\n";' :
-				'ret += (!p.isActive && !p.fainted ? "???" : p.getDetails().shared.replace("|", " (") + ")") + "\\n";') +
+			(show_all ? 'ret += p.getFullDetails().secret.replace("|", " (") + ")\\n";' :
+				'ret += (!p.isActive && !p.fainted ? "???" : p.getFullDetails().shared.replace("|", " (") + ")") + "\\n";') +
 			'if (p.isActive && p.baseSpecies.baseSpecies != p.species.baseSpecies) ret += "Species: " + p.species.name + "\\n";' +
 			(show_all ? 'ret += "Type: " + p.getTypes().join(", ") + "\\n";' : '') +
 			(show_all ? 'ret += "Ability: " + p.getAbility().name + "\\n";' : '') +
@@ -233,16 +233,16 @@ rl.on('line', (line) => {
 		let command = '/*' + line + '*/ let ret = "P1:\\n";';
 		command += 'for (let i = 0; i < p1.pokemon.length; i++) ret += (i + 1) + ". " + ' +
 			'(p1.pokemon[i].isActive ? "* " : "") + ' +
-			'p1.pokemon[i].getDetails().secret.replace("|", " (") + ")" + "\\n";' +
+			'p1.pokemon[i].getFullDetails().secret.replace("|", " (") + ")" + "\\n";' +
 			'ret += "\\nP2:\\n";';
 		if (player_control_ai)
 			command += 'for (let i = 0; i < p2.pokemon.length; i++) ret += (i + 1) + ". " + ' +
 				'(p2.pokemon[i].isActive ? "* " : "") + ' +
-				'p2.pokemon[i].getDetails().secret.replace("|", " (") + ")" + "\\n";';
+				'p2.pokemon[i].getFullDetails().secret.replace("|", " (") + ")" + "\\n";';
 		else
 			command += 'for (let i = 0; i < p2.pokemon.length; i++) ret += (i + 1) + ". " + ' +
 				'(p2.pokemon[i].isActive ? "* " : "") + ' +
-				'(!p2.pokemon[i].isActive && !p2.pokemon[i].fainted ? "???" : p2.pokemon[i].getDetails().shared.replace("|", " (") + ")") + "\\n";';
+				'(!p2.pokemon[i].isActive && !p2.pokemon[i].fainted ? "???" : p2.pokemon[i].getFullDetails().shared.replace("|", " (") + ")") + "\\n";';
 		command += 'ret;';
 		streams.omniscient.write('>eval ' + command);
 	} else if (line == 'random') {
