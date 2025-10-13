@@ -55,6 +55,8 @@ def download_asset(url, path):
                 if response.status_code != 404:
                     print(f'{url} => {path} Error Code:', response.status_code)
                 return
+            if len(response.content) == 0:
+                return
             with open(path, 'wb') as file:
                 file.write(response.content)
             retry = False
@@ -71,7 +73,7 @@ def download_url(folder):
     html = requests.get(f'{url}/?view=dir').text
     result = re.findall(r'<a class="row" href="\./(.*?)">', html)
     for asset in result:
-        if '.' in asset and asset[asset.rindex('.'):] in suffix:
+        if '.' in asset and asset[asset.rindex('.'):].lower() in suffix:
             path = os.path.join(LOCAL_FOLDER, *folder.split('/'), unquote(asset).replace('?', '-'))
             download_asset(f'{url}/{asset}', path)
 
