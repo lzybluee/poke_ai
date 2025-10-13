@@ -26,7 +26,13 @@ folders = [
     'sprites/gen5-back',
     'sprites/gen5-back-shiny',
     'sprites/gen5-shiny',
+    'sprites/gen5ani',
+    'sprites/gen5ani-back',
+    'sprites/gen5ani-back-shiny',
+    'sprites/gen5ani-shiny',
     'sprites/gen6bgs',
+    'sprites/home-centered',
+    'sprites/home-centered-shiny',
     'sprites/misc',
     'sprites/trainers',
     'sprites/types'
