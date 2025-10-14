@@ -5,7 +5,6 @@ import requests
 
 scripts = [
     "js/server/chat-formatter.js",
-    "js/battledata.js",
     "data/text.js",
     "data/pokedex-mini.js",
     "data/pokedex-mini-bw.js",
@@ -17,7 +16,9 @@ scripts = [
     "data/search-index.js",
     "data/teambuilder-tables.js",
     "data/aliases.js",
-    "data/commands.js"
+    "data/commands.js",
+    "data/graphics.js",
+    "data/text-afd.js"
 ]
 
 LOCAL_FOLDER = r'E:\Poke\poke_ai\Projects\client-scripts'
