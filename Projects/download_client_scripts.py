@@ -18,7 +18,6 @@ scripts = [
     "data/aliases.js",
     "data/commands.js",
     "data/graphics.js",
-    "data/text-afd.js"
 ]
 
 LOCAL_FOLDER = r'E:\Poke\poke_ai\Projects\client-scripts'
