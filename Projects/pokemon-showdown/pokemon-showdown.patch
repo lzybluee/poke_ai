@@ -1,4 +1,4 @@
-From 42f92d23e2a9075aaef2eecd94b84c4649617af8 Mon Sep 17 00:00:00 2001
+From cda40da17037b805d1a9a19e9bf93bd33f300d91 Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
 Date: Mon, 13 Oct 2025 20:22:44 +0800
 Subject: [PATCH] Patch
@@ -12,10 +12,10 @@ Subject: [PATCH] Patch
  5 files changed, 48 insertions(+), 17 deletions(-)
 
 diff --git a/config/formats.ts b/config/formats.ts
-index 5c0c10bd7..b0037c13d 100644
+index 6fd345886..5dbb7f732 100644
 --- a/config/formats.ts
 +++ b/config/formats.ts
-@@ -3561,6 +3561,26 @@ export const Formats: import('../sim/dex-formats').FormatList = [
+@@ -3562,6 +3562,26 @@ export const Formats: import('../sim/dex-formats').FormatList = [
  		bestOfDefault: true,
  		ruleset: ['Obtainable', 'Sleep Clause Mod', 'HP Percentage Mod', 'Cancel Mod', 'Illusion Level Mod'],
  	},
@@ -42,7 +42,7 @@ index 5c0c10bd7..b0037c13d 100644
  	{
  		name: "[Gen 7] Battle Factory",
  		desc: `Randomized teams of Pok&eacute;mon for a generated Smogon tier with sets that are competitively viable.`,
-@@ -4227,6 +4247,16 @@ export const Formats: import('../sim/dex-formats').FormatList = [
+@@ -4228,6 +4248,16 @@ export const Formats: import('../sim/dex-formats').FormatList = [
  		// no restrictions, for serious (other than team preview)
  		ruleset: ['Team Preview', 'Cancel Mod', 'Max Team Size = 24', 'Max Move Count = 24', 'Max Level = 9999', 'Default Level = 100'],
  	},
