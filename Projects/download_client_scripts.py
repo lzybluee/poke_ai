@@ -20,7 +20,7 @@ scripts = [
     "data/graphics.js",
 ]
 
-LOCAL_FOLDER = r'E:\Poke\poke_ai\Projects\client-scripts'
+LOCAL_FOLDER = r'client-scripts'
 
 
 def download_script(url, path):
