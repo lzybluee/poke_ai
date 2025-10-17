@@ -1,6 +1,6 @@
-From 8ce76396bc5f68df2d16c2cb05927bcfc367124e Mon Sep 17 00:00:00 2001
+From 7ab26d74e0add11334513ca5cad9a2a96e3b1f17 Mon Sep 17 00:00:00 2001
 From: lzybluee <lzybluee@gmail.com>
-Date: Sat, 11 Oct 2025 20:42:22 +0800
+Date: Sat, 18 Oct 2025 07:42:00 +0800
 Subject: [PATCH] Patch
 
 ---
@@ -13,12 +13,12 @@ Subject: [PATCH] Patch
  .../src/battle-searchresults.tsx              |  6 +--
  play.pokemonshowdown.com/src/battle-sound.ts  |  2 +-
  play.pokemonshowdown.com/src/panels.tsx       |  2 +-
- play.pokemonshowdown.com/style/battle.css     |  2 +
+ play.pokemonshowdown.com/style/battle.css     |  3 ++
  play.pokemonshowdown.com/style/client.css     | 10 ++--
  play.pokemonshowdown.com/style/client2.css    | 10 ++--
  play.pokemonshowdown.com/testclient.html      |  3 +-
  teams.pokemonshowdown.com/src/utils.tsx       |  2 +-
- 14 files changed, 105 insertions(+), 59 deletions(-)
+ 14 files changed, 106 insertions(+), 59 deletions(-)
 
 diff --git a/build-tools/update b/build-tools/update
 index 18733bcd..a0df12df 100755
@@ -479,7 +479,7 @@ index 233fc3e6..2936f541 100644
  			src={`${Dex.resourcePrefix}sprites/types/${sanitizedType}.png`} alt={type}
  			height="14" width="32" class={`pixelated${props.b ? ' b' : ''}`} style="vertical-align:middle"
 diff --git a/play.pokemonshowdown.com/style/battle.css b/play.pokemonshowdown.com/style/battle.css
-index bf8bed31..2eac7e49 100644
+index bf8bed31..8c792243 100644
 --- a/play.pokemonshowdown.com/style/battle.css
 +++ b/play.pokemonshowdown.com/style/battle.css
 @@ -628,6 +628,7 @@ License: GPLv2
@@ -498,6 +498,14 @@ index bf8bed31..2eac7e49 100644
  }
  .chooser div {
  	float: left;
+@@ -649,6 +651,7 @@ License: GPLv2
+ 	font-family: Verdana, sans-serif;
+ 	border-radius: 3px;
+ 	cursor: pointer;
++	color: #000000;
+ }
+ .chooser button:hover {
+ 	border: 1px solid #BBBBBB;
 diff --git a/play.pokemonshowdown.com/style/client.css b/play.pokemonshowdown.com/style/client.css
 index c14d35c3..4c00d4f1 100644
 --- a/play.pokemonshowdown.com/style/client.css
